@@ -1,6 +1,11 @@
+import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt")
+    id("dagger.hilt.android.plugin")
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
@@ -27,11 +32,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
 
     buildFeatures {
@@ -58,17 +63,33 @@ dependencies {
     val composeBom = platform("androidx.compose:compose-bom:2023.01.00")
     implementation(composeBom)
     // Material Design 3
-    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material3:material3-android:1.2.0-alpha10")
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
+    implementation("androidx.navigation:navigation-compose:2.7.4")
 
     androidTestImplementation(composeBom)
     // Optional - Integration with activities
-    implementation("androidx.activity:activity-compose:1.6.1")
+    implementation("androidx.activity:activity-compose:1.8.0")
     // Optional - Integration with ViewModels
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
     // Optional - Integration with LiveData
     implementation("androidx.compose.runtime:runtime-livedata")
 
     // Android Studio Preview support
     implementation("androidx.compose.ui:ui-tooling-preview")
     debugImplementation("androidx.compose.ui:ui-tooling")
+
+    // Hilt
+    implementation("com.google.dagger:hilt-android:2.44")
+    kapt("com.google.dagger:hilt-android-compiler:2.44")
+    implementation("androidx.hilt:hilt-work:1.0.0")
+    kapt("androidx.hilt:hilt-compiler:1.0.0")
+    implementation("androidx.work:work-runtime-ktx:2.8.1")
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+
+    // Map
+    implementation("com.google.maps.android:maps-compose:4.1.1")
+
+    // required to avoid crash on Android 12 API 31
+    implementation("androidx.work:work-runtime-ktx:2.8.1")
 }
