@@ -1,4 +1,4 @@
-package fr.wonderfulappstudio.notifymehere.ui
+package fr.wonderfulappstudio.notifymehere.ui.details
 
 import androidx.compose.runtime.Stable
 
