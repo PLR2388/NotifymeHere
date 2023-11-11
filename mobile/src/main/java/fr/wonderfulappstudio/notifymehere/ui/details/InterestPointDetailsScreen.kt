@@ -4,6 +4,8 @@ import android.Manifest
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,18 +15,26 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.Button
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -39,6 +49,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Date
 
 enum class InterestPointDetailsState {
     Add, Modify, Read
@@ -65,6 +77,7 @@ fun InterestPointDetailsScreen(
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION
     )
+
 
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
@@ -157,29 +170,101 @@ fun InterestPointDetailsScreen(
                 }
             }
             item {
-                OutlinedTextField(
-                    value = "5/02/2024 14:30",
-                    onValueChange = {},
-                    readOnly = true,
-                    label = {
-                        Text(text = "Start Date (optional)")
-                    })
+                DatePickerField("Start Date (optional)", onDateSelected = viewModel::setStartDate)
             }
             item {
-                OutlinedTextField(
-                    value = "5/02/2024 14:30",
-                    onValueChange = {},
-                    readOnly = true,
-                    label = {
-                        Text(text = "End Date (optional)")
-                    })
+                DatePickerField("End Date (optional)", onDateSelected = viewModel::setEndDate)
             }
             item {
-                Button(onClick = { /*TODO*/ }, modifier = Modifier.fillMaxWidth()) {
+                Button(onClick = { viewModel.saveInterestPoint() }, modifier = Modifier.fillMaxWidth()) {
                     Text("Add")
                 }
             }
         }
+    }
+}
+
+private fun convertMillisToDate(millis: Long): String {
+    val formatter = SimpleDateFormat("dd/MM/yyyy")
+    return formatter.format(Date(millis))
+}
+
+@Composable
+fun DatePickerField(label: String, onDateSelected: (Long?) -> Unit) {
+    var date by remember {
+        mutableStateOf("-")
+    }
+
+    var showDatePicker by remember {
+        mutableStateOf(false)
+    }
+
+    OutlinedTextField(
+        value = date,
+        onValueChange = {},
+        readOnly = true,
+        label = {
+            Text(text = label)
+        }, interactionSource = remember { MutableInteractionSource() }
+            .also { interactionSource ->
+                LaunchedEffect(interactionSource) {
+                    interactionSource.interactions.collect {
+                        if (it is PressInteraction.Release) {
+                            // works like onClick
+                            showDatePicker = true
+                        }
+                    }
+                }
+            })
+
+    if (showDatePicker) {
+        DatePicker(
+            onDateSelected = {
+                onDateSelected(it)
+                date = it?.let {
+                    convertMillisToDate(it)
+                } ?: ""
+            },
+            onDismiss = { showDatePicker = false }
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DatePicker(
+    onDateSelected: (Long?) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val datePickerState = rememberDatePickerState(selectableDates = object : SelectableDates {
+        override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+            return utcTimeMillis > System.currentTimeMillis()
+        }
+    })
+
+    DatePickerDialog(
+        onDismissRequest = { onDismiss() },
+        confirmButton = {
+            Button(onClick = {
+                onDateSelected(datePickerState.selectedDateMillis)
+                onDismiss()
+            }
+
+            ) {
+                Text(text = "OK")
+            }
+        },
+        dismissButton = {
+            Button(onClick = {
+                onDismiss()
+            }) {
+                Text(text = "Cancel")
+            }
+        }
+    ) {
+        DatePicker(
+            state = datePickerState
+        )
     }
 }
 

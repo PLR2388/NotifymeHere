@@ -20,20 +20,26 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import fr.wonderfulappstudio.notifymehere.InterestPoint
+import androidx.hilt.navigation.compose.hiltViewModel
+import fr.wonderfulappstudio.notifymehere.model.InterestPoint
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotifyMeHereMainScreen(
-    interestPoints: List<InterestPoint>,
+    viewModel: MainViewModel = hiltViewModel(),
     navigateToAddInterestPoint: () -> Unit
 ) {
+    val interestPoints by viewModel.interestPoints.collectAsState(initial = emptyList())
+
+
     Scaffold(topBar = {
         TopAppBar(title = { Text("Notify me here!") }, actions = {
             IconButton(onClick = navigateToAddInterestPoint) {
@@ -103,22 +109,4 @@ fun InterestPointCardPreview() {
             1698755587,
             1698955587
         ), navigateTo = {})
-}
-
-@Preview
-@Composable
-fun NotifyMeHereMainScreenPreview() {
-    NotifyMeHereMainScreen(
-        listOf(
-            InterestPoint(
-                1,
-                "House",
-                "Where I live",
-                Pair(48.862725, 2.287592),
-                1698755587,
-                1698955587
-            )
-        ),
-        {}
-    )
 }

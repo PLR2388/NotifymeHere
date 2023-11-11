@@ -27,8 +27,6 @@ import fr.wonderfulappstudio.notifymehere.ui.NotifyMeHereMainScreen
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: MainViewModel by viewModels()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -37,7 +35,6 @@ class MainActivity : ComponentActivity() {
                 NavHost(navController = navController, startDestination = Main.route) {
                     composable(Main.route) {
                         NotifyMeHereMainScreen(
-                            viewModel.interestPoints,
                             navigateToAddInterestPoint = {
                                 navController.navigate(Details.route)
                             })

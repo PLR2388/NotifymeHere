@@ -1,16 +1,14 @@
 package fr.wonderfulappstudio.notifymehere.ui
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.wonderfulappstudio.notifymehere.InterestPoint
+import fr.wonderfulappstudio.notifymehere.model.InterestPoint
+import fr.wonderfulappstudio.notifymehere.repository.InterestPointRepository
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(): ViewModel() {
+class MainViewModel @Inject constructor(interestPointRepository: InterestPointRepository): ViewModel() {
 
-    var interestPoints: List<InterestPoint> by mutableStateOf(listOf())
-    private set
+    val interestPoints: Flow<List<InterestPoint>> = interestPointRepository.interestPoints
 }
