@@ -1,5 +1,6 @@
 package fr.wonderfulappstudio.notifymehere.model
 
+import com.google.android.gms.wearable.DataMap
 import fr.wonderfulappstudio.notifymehere.model.room.RoomInterestPoint
 
 data class InterestPoint(
@@ -10,6 +11,19 @@ data class InterestPoint(
     val startDate: Long? = null,
     val endDate: Long? = null
 ) {
+
+    fun toDataMap(): DataMap {
+        return DataMap().apply {
+            putInt("id", id ?: -1)  // Using -1 or another value to represent null
+            putString("name", name)
+            description?.let { putString("description", it) }
+            putDouble("latitude", gpsPosition.first)
+            putDouble("longitude", gpsPosition.second)
+            startDate?.let { putLong("startDate", it) }
+            endDate?.let { putLong("endDate", it) }
+        }
+    }
+
 
     fun toRoomInterestPoint() : RoomInterestPoint {
         return if (id != null) {

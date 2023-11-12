@@ -12,9 +12,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -35,16 +38,21 @@ import fr.wonderfulappstudio.notifymehere.model.InterestPoint
 @Composable
 fun NotifyMeHereMainScreen(
     viewModel: MainViewModel = hiltViewModel(),
-    navigateToAddInterestPoint: (Int?) -> Unit
+    navigateToAddInterestPoint: (Int?) -> Unit,
+    onSendToWatch: (List<InterestPoint>) -> Unit
 ) {
     val interestPoints by viewModel.interestPoints.collectAsState(initial = emptyList())
 
     Scaffold(topBar = {
         TopAppBar(title = { Text("Notify me here!") }, actions = {
-            IconButton(onClick = { navigateToAddInterestPoint(null) }) {
-                Image(imageVector = Icons.Filled.Add, contentDescription = null)
+            IconButton(onClick = { onSendToWatch(interestPoints) }) {
+                Image(imageVector = Icons.AutoMirrored.Filled.Send, contentDescription = null)
             }
         })
+    }, floatingActionButton = {
+        FloatingActionButton(onClick = { navigateToAddInterestPoint(null) }) {
+            Image(imageVector = Icons.Filled.Add, contentDescription = null)
+        }
     }) { contentPadding ->
         LazyColumn(
             contentPadding = contentPadding,
@@ -70,10 +78,12 @@ fun NotifyMeHereMainScreen(
 @Composable
 fun InterestPointCard(interestPoint: InterestPoint, navigateTo: (InterestPoint) -> Unit) {
     Card(
-        modifier = Modifier.clickable(
-            onClick = { navigateTo(interestPoint) },
-            role = Role.Button
-        ).padding(8.dp)
+        modifier = Modifier
+            .clickable(
+                onClick = { navigateTo(interestPoint) },
+                role = Role.Button
+            )
+            .padding(8.dp)
     ) {
         Row(
             modifier = Modifier

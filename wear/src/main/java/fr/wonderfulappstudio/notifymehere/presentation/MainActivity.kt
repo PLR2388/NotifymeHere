@@ -37,6 +37,10 @@ class MainActivity : ComponentActivity() {
             WearApp()
         }
     }
+
+    companion object {
+        const val INTEREST_POINTS_PATH = "/interest_points"
+    }
 }
 
 @Composable
