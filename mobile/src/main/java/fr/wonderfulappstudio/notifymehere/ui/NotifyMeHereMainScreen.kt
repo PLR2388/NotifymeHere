@@ -35,14 +35,13 @@ import fr.wonderfulappstudio.notifymehere.model.InterestPoint
 @Composable
 fun NotifyMeHereMainScreen(
     viewModel: MainViewModel = hiltViewModel(),
-    navigateToAddInterestPoint: () -> Unit
+    navigateToAddInterestPoint: (Int?) -> Unit
 ) {
     val interestPoints by viewModel.interestPoints.collectAsState(initial = emptyList())
 
-
     Scaffold(topBar = {
         TopAppBar(title = { Text("Notify me here!") }, actions = {
-            IconButton(onClick = navigateToAddInterestPoint) {
+            IconButton(onClick = { navigateToAddInterestPoint(null) }) {
                 Image(imageVector = Icons.Filled.Add, contentDescription = null)
             }
         })
@@ -59,7 +58,9 @@ fun NotifyMeHereMainScreen(
                 item { Text(text = "You don't have any interest point! Click on the + icon to add one!") }
             } else {
                 items(interestPoints) { interestPoint ->
-                    InterestPointCard(interestPoint = interestPoint, navigateTo = {})
+                    InterestPointCard(interestPoint = interestPoint, navigateTo = {
+                        it.id?.let { id -> navigateToAddInterestPoint(id) }
+                    })
                 }
             }
         }
@@ -72,17 +73,17 @@ fun InterestPointCard(interestPoint: InterestPoint, navigateTo: (InterestPoint) 
         modifier = Modifier.clickable(
             onClick = { navigateTo(interestPoint) },
             role = Role.Button
-        )
+        ).padding(8.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp)
+                .height(80.dp)
                 .padding(horizontal = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
+            Column(verticalArrangement = Arrangement.SpaceBetween) {
                 Text(interestPoint.name, fontWeight = FontWeight.Bold)
                 Text(
                     "${interestPoint.gpsPosition.first}, ${interestPoint.gpsPosition.second}",

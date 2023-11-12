@@ -5,29 +5,129 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.wonderfulappstudio.notifymehere.model.InterestPoint
 import fr.wonderfulappstudio.notifymehere.repository.InterestPointRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class InterestPointDetailsViewModel @Inject constructor(private val interestPointRepository: InterestPointRepository) :
     ViewModel() {
 
+    private var detailsId: Int? = null
+
+    var state: InterestPointDetailsState by mutableStateOf(InterestPointDetailsState.Add)
+
     var uiState: InterestPointUiState by mutableStateOf(InterestPointUiState())
 
-    fun saveInterestPoint() {
-        val interestPoint = InterestPoint(
-            null,
+    var isLoading: Boolean by mutableStateOf(false)
+        private set
+
+    var alertType: AlertType? by mutableStateOf(null)
+        private set
+
+    var showAlert: Boolean by mutableStateOf(false)
+        private set
+
+    var showSuccess: Boolean by mutableStateOf(false)
+        private set
+
+    fun setDetailsId(detailsId: Int?) {
+        this.detailsId = detailsId
+        if (detailsId == null || detailsId == -1) {
+            state = InterestPointDetailsState.Add
+            uiState = InterestPointUiState()
+        } else {
+            viewModelScope.launch(Dispatchers.IO) {
+                val interestPoint = interestPointRepository.getInterestPointById(detailsId)
+                withContext(Dispatchers.Main) {
+                    uiState = if (interestPoint == null) {
+                        state = InterestPointDetailsState.Add
+                        InterestPointUiState()
+                    } else {
+                        state = InterestPointDetailsState.Read
+                        uiState.copy(
+                            name = interestPoint.name,
+                            description = interestPoint.description,
+                            gpsPosition = interestPoint.gpsPosition,
+                            startDate = interestPoint.startDate,
+                            endDate = interestPoint.endDate
+                        )
+                    }
+                }
+
+            }
+        }
+    }
+
+    fun delete(completion: () -> Unit) {
+        isLoading = true
+        val interestPoint = buildInterestPoint()
+        viewModelScope.launch(Dispatchers.IO) {
+            interestPointRepository.delete(interestPoint)
+            withContext(Dispatchers.Main) {
+                isLoading = false
+                completion()
+            }
+        }
+    }
+
+    fun toggleEditMode() {
+        state = if (state == InterestPointDetailsState.Read) {
+            InterestPointDetailsState.Modify
+        } else {
+            InterestPointDetailsState.Read
+        }
+    }
+
+    fun hideAlert() {
+        showAlert = false
+    }
+
+    fun saveInterestPoint(onDismiss: () -> Unit) {
+        isLoading = true
+        if (uiState.name.isEmpty()) {
+            alertType = AlertType.NameIsEmpty
+            showAlert = true
+            isLoading = false
+        } else if (uiState.gpsPosition == Pair(0.0, 0.0)) {
+            alertType = AlertType.PositionIsEmpty
+            showAlert = true
+            isLoading = false
+        } else if (uiState.startDate != null && uiState.endDate != null && uiState.endDate!! < uiState.startDate!!) {
+            alertType = AlertType.StartDateGreaterEndDate
+            showAlert = true
+            isLoading = false
+        } else {
+            val interestPoint = buildInterestPoint()
+            viewModelScope.launch {
+                if (interestPoint.id == null) {
+                    interestPointRepository.insert(interestPoint)
+                } else {
+                    interestPointRepository.update(interestPoint)
+                }
+                withContext(Dispatchers.Main) {
+                    showSuccess = true
+                    isLoading = false
+                    onDismiss()
+                }
+            }
+        }
+    }
+
+    private fun buildInterestPoint(): InterestPoint {
+        val id = if (detailsId == null || detailsId == -1) null else detailsId
+        return InterestPoint(
+            id,
             uiState.name,
             uiState.description,
             uiState.gpsPosition,
             uiState.startDate,
             uiState.endDate
         )
-        viewModelScope.launch { interestPointRepository.insert(interestPoint) }
     }
 
     fun setName(value: String) {

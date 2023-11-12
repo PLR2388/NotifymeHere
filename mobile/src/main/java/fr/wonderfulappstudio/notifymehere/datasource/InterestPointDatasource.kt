@@ -14,4 +14,21 @@ class InterestPointDatasource @Inject constructor(private val interestPointDao: 
     suspend fun insert(interestPoint: InterestPoint) {
         interestPointDao.insert(interestPoint.toRoomInterestPoint())
     }
+
+    suspend fun update(interestPoint: InterestPoint) {
+        interestPointDao.update(interestPoint.toRoomInterestPoint())
+    }
+
+    suspend fun delete(interestPoint: InterestPoint) {
+        interestPointDao.delete(interestPoint.toRoomInterestPoint())
+    }
+
+    fun getInterestPointById(id: Int): InterestPoint? {
+        val roomInterestPoint = interestPointDao.getInterestPointById(id)
+        return if (roomInterestPoint == null) {
+            null
+        } else {
+            InterestPoint.fromRoomInterestPoint(roomInterestPoint)
+        }
+    }
 }

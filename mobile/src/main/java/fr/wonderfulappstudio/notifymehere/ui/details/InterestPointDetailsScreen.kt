@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
@@ -25,6 +27,10 @@ import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SelectableDates
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
@@ -45,6 +51,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority.PRIORITY_LOW_POWER
+import fr.wonderfulappstudio.notifymehere.ui.composable.CustomAlert
+import fr.wonderfulappstudio.notifymehere.ui.composable.DatePickerField
+import fr.wonderfulappstudio.notifymehere.ui.composable.LoadingScreen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -56,28 +65,25 @@ enum class InterestPointDetailsState {
     Add, Modify, Read
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InterestPointDetailsScreen(
     viewModel: InterestPointDetailsViewModel = hiltViewModel(),
-    position: Pair<Double, Double>? = null,
     onNavigateBack: () -> Unit,
     onNavigateToMap: (Pair<Double, Double>) -> Unit
 ) {
     val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     val locationClient = remember {
         LocationServices.getFusedLocationProviderClient(context)
-    }
-    if (position != null) {
-        viewModel.setGpsPosition(position)
     }
 
     val locationPermissions = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION
     )
-
 
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
@@ -92,6 +98,21 @@ fun InterestPointDetailsScreen(
             }
         })
 
+    if (viewModel.showAlert) {
+        viewModel.alertType?.let {
+            CustomAlert(alertType = it, onDismiss = viewModel::hideAlert)
+        }
+    }
+
+    LaunchedEffect(key1 = viewModel.showSuccess) {
+        scope.launch {
+            snackbarHostState.showSnackbar(
+                message = "Your interest point was saved",
+                duration = SnackbarDuration.Long
+            )
+        }
+    }
+
     LaunchedEffect(key1 = Unit) {
         val locationPermissionsAlreadyGranted = ContextCompat.checkSelfPermission(
             context,
@@ -103,173 +124,149 @@ fun InterestPointDetailsScreen(
     }
 
     Scaffold(topBar = {
-        TopAppBar(title = { Text("Add a new interest point") }, navigationIcon = {
+        TopAppBar(title = { Text(when (viewModel.state) {
+            InterestPointDetailsState.Add -> "Add a new interest point"
+            InterestPointDetailsState.Modify -> "Modifiy ${viewModel.uiState.name}"
+            InterestPointDetailsState.Read -> viewModel.uiState.name
+        } )}, navigationIcon = {
             IconButton(onClick = onNavigateBack) {
-                Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = null
+                )
             }
-        })
-    }) { contentPadding ->
-        LazyColumn(
-            contentPadding = contentPadding,
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp)
-        ) {
-            item {
-                OutlinedTextField(
-                    value = viewModel.uiState.name,
-                    onValueChange = viewModel::setName,
-                    label = { Text("Name") })
+        }, actions = {
+            when (viewModel.state) {
+                InterestPointDetailsState.Add -> {}
+                InterestPointDetailsState.Modify -> {
+                    IconButton(onClick = viewModel::toggleEditMode) {
+                        Icon(imageVector = Icons.Filled.Clear, contentDescription = null)
+                    }
+                }
 
+                InterestPointDetailsState.Read -> {
+                    IconButton(onClick = viewModel::toggleEditMode) {
+                        Icon(imageVector = Icons.Filled.Edit, contentDescription = null)
+                    }
+                }
             }
-            item {
-                OutlinedTextField(
-                    value = viewModel.uiState.description ?: "",
-                    onValueChange = viewModel::setDescription,
-                    label = { Text("Description (optional)") })
-            }
-            item {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.End,
-                    modifier = Modifier.padding(start = 48.dp)
-                ) {
+
+        })
+    }, snackbarHost = {
+        SnackbarHost(hostState = snackbarHostState) {
+        }
+    }) { contentPadding ->
+        LoadingScreen(isShown = viewModel.isLoading) {
+            LazyColumn(
+                contentPadding = contentPadding,
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp)
+            ) {
+                item {
                     OutlinedTextField(
-                        value = String.format(
-                            "%.10f; %.10f",
-                            viewModel.uiState.gpsPosition.first,
-                            viewModel.uiState.gpsPosition.second
-                        ),
-                        onValueChange = {},
-                        readOnly = true,
-                        label = { Text("GPS Position") })
-                    OutlinedIconButton(onClick = {
-                        if ((viewModel.uiState.gpsPosition.first == 0.0) && (viewModel.uiState.gpsPosition.second == 0.0)) {
-                            scope.launch(Dispatchers.IO) {
-                                val result = locationClient.getCurrentLocation(
-                                    CurrentLocationRequest.Builder().setPriority(PRIORITY_LOW_POWER)
-                                        .setDurationMillis(1000).setMaxUpdateAgeMillis(86_400_000)
-                                        .build(), null
-                                ).await()
-                                withContext(Dispatchers.Main) {
-                                    if (result == null) {
-                                        onNavigateToMap(viewModel.uiState.gpsPosition)
-                                    } else {
-                                        onNavigateToMap(Pair(result.latitude, result.longitude))
+                        value = viewModel.uiState.name,
+                        onValueChange = viewModel::setName,
+                        readOnly = viewModel.state == InterestPointDetailsState.Read,
+                        label = { Text("Name") })
+
+                }
+                item {
+                    OutlinedTextField(
+                        value = viewModel.uiState.description ?: "",
+                        onValueChange = viewModel::setDescription,
+                        readOnly = viewModel.state == InterestPointDetailsState.Read,
+                        label = { Text("Description (optional)") })
+                }
+                item {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.End,
+                        modifier = Modifier.padding(start = 48.dp)
+                    ) {
+                        OutlinedTextField(
+                            value = String.format(
+                                "%.10f; %.10f",
+                                viewModel.uiState.gpsPosition.first,
+                                viewModel.uiState.gpsPosition.second
+                            ),
+                            onValueChange = {},
+                            readOnly = true,
+                            label = { Text("GPS Position") })
+                        OutlinedIconButton(onClick = {
+                            if (viewModel.state == InterestPointDetailsState.Read) return@OutlinedIconButton
+                            if (viewModel.uiState.gpsPosition == Pair(0.0, 0.0)) {
+                                scope.launch(Dispatchers.IO) {
+                                    val result = locationClient.getCurrentLocation(
+                                        CurrentLocationRequest.Builder()
+                                            .setPriority(PRIORITY_LOW_POWER)
+                                            .setDurationMillis(1000)
+                                            .setMaxUpdateAgeMillis(86_400_000)
+                                            .build(), null
+                                    ).await()
+                                    withContext(Dispatchers.Main) {
+                                        if (result == null) {
+                                            onNavigateToMap(viewModel.uiState.gpsPosition)
+                                        } else {
+                                            onNavigateToMap(
+                                                Pair(
+                                                    result.latitude,
+                                                    result.longitude
+                                                )
+                                            )
+                                        }
                                     }
                                 }
+                            } else {
+                                onNavigateToMap(viewModel.uiState.gpsPosition)
                             }
-                        } else {
-                            onNavigateToMap(viewModel.uiState.gpsPosition)
-                        }
-                    }) {
-                        Icon(imageVector = Icons.Outlined.LocationOn, contentDescription = null)
-                    }
-                }
-            }
-            item {
-                DatePickerField("Start Date (optional)", onDateSelected = viewModel::setStartDate)
-            }
-            item {
-                DatePickerField("End Date (optional)", onDateSelected = viewModel::setEndDate)
-            }
-            item {
-                Button(onClick = { viewModel.saveInterestPoint() }, modifier = Modifier.fillMaxWidth()) {
-                    Text("Add")
-                }
-            }
-        }
-    }
-}
-
-private fun convertMillisToDate(millis: Long): String {
-    val formatter = SimpleDateFormat("dd/MM/yyyy")
-    return formatter.format(Date(millis))
-}
-
-@Composable
-fun DatePickerField(label: String, onDateSelected: (Long?) -> Unit) {
-    var date by remember {
-        mutableStateOf("-")
-    }
-
-    var showDatePicker by remember {
-        mutableStateOf(false)
-    }
-
-    OutlinedTextField(
-        value = date,
-        onValueChange = {},
-        readOnly = true,
-        label = {
-            Text(text = label)
-        }, interactionSource = remember { MutableInteractionSource() }
-            .also { interactionSource ->
-                LaunchedEffect(interactionSource) {
-                    interactionSource.interactions.collect {
-                        if (it is PressInteraction.Release) {
-                            // works like onClick
-                            showDatePicker = true
+                        }) {
+                            Icon(
+                                imageVector = Icons.Outlined.LocationOn,
+                                contentDescription = null
+                            )
                         }
                     }
                 }
-            })
-
-    if (showDatePicker) {
-        DatePicker(
-            onDateSelected = {
-                onDateSelected(it)
-                date = it?.let {
-                    convertMillisToDate(it)
-                } ?: ""
-            },
-            onDismiss = { showDatePicker = false }
-        )
+                item {
+                    DatePickerField(
+                        "Start Date (optional)",
+                        readOnly = viewModel.state == InterestPointDetailsState.Read,
+                        onDateSelected = viewModel::setStartDate
+                    )
+                }
+                item {
+                    DatePickerField(
+                        "End Date (optional)",
+                        readOnly = viewModel.state == InterestPointDetailsState.Read,
+                        onDateSelected = viewModel::setEndDate
+                    )
+                }
+                item {
+                    if (viewModel.state != InterestPointDetailsState.Read) {
+                        Button(
+                            onClick = { viewModel.saveInterestPoint(onDismiss = onNavigateBack) },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(if (viewModel.state == InterestPointDetailsState.Add) "Add" else "Modify")
+                        }
+                    }
+                }
+                item {
+                    if (viewModel.state != InterestPointDetailsState.Add) {
+                        Button(
+                            onClick = { viewModel.delete(onNavigateBack) },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("delete")
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DatePicker(
-    onDateSelected: (Long?) -> Unit,
-    onDismiss: () -> Unit,
-) {
-    val datePickerState = rememberDatePickerState(selectableDates = object : SelectableDates {
-        override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-            return utcTimeMillis > System.currentTimeMillis()
-        }
-    })
 
-    DatePickerDialog(
-        onDismissRequest = { onDismiss() },
-        confirmButton = {
-            Button(onClick = {
-                onDateSelected(datePickerState.selectedDateMillis)
-                onDismiss()
-            }
-
-            ) {
-                Text(text = "OK")
-            }
-        },
-        dismissButton = {
-            Button(onClick = {
-                onDismiss()
-            }) {
-                Text(text = "Cancel")
-            }
-        }
-    ) {
-        DatePicker(
-            state = datePickerState
-        )
-    }
-}
-
-@Preview
-@Composable
-fun InterestPointDetailsScreenPreview() {
-    InterestPointDetailsScreen(onNavigateToMap = {}, onNavigateBack = {})
-}
