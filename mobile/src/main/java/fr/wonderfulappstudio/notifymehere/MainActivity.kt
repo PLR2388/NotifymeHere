@@ -2,7 +2,6 @@ package fr.wonderfulappstudio.notifymehere
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -35,7 +34,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import java.time.Duration
 import java.time.Instant
 
 @AndroidEntryPoint
@@ -44,8 +42,6 @@ class MainActivity : ComponentActivity() {
     private val messageClient by lazy { Wearable.getMessageClient(this) }
     private val capabilityClient by lazy { Wearable.getCapabilityClient(this) }
 
-
-    private val mainViewModel: MainViewModel by viewModels()
     private val detailsViewModel: InterestPointDetailsViewModel by viewModels()
 
     private val startMapForResult: ActivityResultLauncher<Intent> =
@@ -54,7 +50,7 @@ class MainActivity : ComponentActivity() {
                 val data: Intent? = result.data
                 val latitude = data?.getDoubleExtra(MapActivity.LATITUDE_EXTRA_KEY, 0.0) ?: 0.0
                 val longitude = data?.getDoubleExtra(MapActivity.LONGITUDE_EXTRA_KEY, 0.0) ?: 0.0
-                detailsViewModel.setGpsPosition(Pair(latitude.toDouble(), longitude.toDouble()))
+                detailsViewModel.setGpsPosition(Pair(latitude, longitude))
             }
         }
 
@@ -67,9 +63,8 @@ class MainActivity : ComponentActivity() {
                 NavHost(navController = navController, startDestination = Main.route) {
                     composable(Main.route) {
                         NotifyMeHereMainScreen(
-                            viewModel = mainViewModel,
                             onSendToWatch = {
-                                sendPhoto(it)
+                                sendInterestPoints(it)
                             },
                             navigateToAddInterestPoint = {
                                 val route = if (it == null) {
@@ -112,24 +107,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        dataClient.addListener(mainViewModel)
-        messageClient.addListener(mainViewModel)
-        capabilityClient.addListener(
-            mainViewModel,
-            Uri.parse("wear://"),
-            CapabilityClient.FILTER_REACHABLE
-        )
-    }
-
-    override fun onPause() {
-        super.onPause()
-        dataClient.removeListener(mainViewModel)
-        messageClient.removeListener(mainViewModel)
-        capabilityClient.removeListener(mainViewModel)
-    }
-
     private fun startWearableActivity() {
         lifecycleScope.launch {
             try {
@@ -160,15 +137,13 @@ class MainActivity : ComponentActivity() {
     ): PutDataRequest {
         val putDataMapReq = PutDataMapRequest.create(INTEREST_POINTS_PATH).apply {
             val dataMapArray = interestPoints.map { it.toDataMap() }
-            dataMap.putDataMapArrayList(IMAGE_KEY, ArrayList(dataMapArray))
+            dataMap.putDataMapArrayList(INTEREST_POINTS_KEY, ArrayList(dataMapArray))
             dataMap.putLong(TIME_KEY, Instant.now().epochSecond)
         }
-
-
         return putDataMapReq.asPutDataRequest().setUrgent()
     }
 
-    private fun sendPhoto(interestPoints: List<InterestPoint>) {
+    private fun sendInterestPoints(interestPoints: List<InterestPoint>) {
         lifecycleScope.launch {
             try {
                 val request = createInterestPointsDataRequest(interestPoints)
@@ -189,7 +164,7 @@ class MainActivity : ComponentActivity() {
         private const val INTEREST_POINTS_PATH = "/interest-points"
         private const val START_ACTIVITY_PATH = "/start-activity"
         private const val WEAR_CAPABILITY = "wear"
-        private const val IMAGE_KEY = "photo"
+        private const val INTEREST_POINTS_KEY = "interestPoints"
         private const val TIME_KEY = "time"
     }
 

@@ -14,21 +14,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(interestPointRepository: InterestPointRepository): ViewModel(),
-    DataClient.OnDataChangedListener,
-    MessageClient.OnMessageReceivedListener,
-    CapabilityClient.OnCapabilityChangedListener {
+class MainViewModel @Inject constructor(interestPointRepository: InterestPointRepository): ViewModel() {
 
     val interestPoints: Flow<List<InterestPoint>> = interestPointRepository.interestPoints
-    override fun onDataChanged(p0: DataEventBuffer) {
-
-    }
-
-    override fun onMessageReceived(p0: MessageEvent) {
-
-    }
-
-    override fun onCapabilityChanged(p0: CapabilityInfo) {
-
-    }
 }
