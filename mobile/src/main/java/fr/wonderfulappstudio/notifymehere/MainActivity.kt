@@ -2,6 +2,7 @@ package fr.wonderfulappstudio.notifymehere
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -16,6 +17,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.PutDataRequest
 import com.google.android.gms.wearable.Wearable
@@ -29,12 +31,18 @@ import fr.wonderfulappstudio.notifymehere.ui.details.InterestPointDetailsViewMod
 import fr.wonderfulappstudio.notifymehere.ui.map.MapActivity
 import fr.wonderfulappstudio.notifymehere.ui.map.startMapActivityForResult
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.time.Duration
+import java.time.Instant
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val dataClient by lazy { Wearable.getDataClient(this) }
+    private val messageClient by lazy { Wearable.getMessageClient(this) }
+    private val capabilityClient by lazy { Wearable.getCapabilityClient(this) }
 
 
     private val mainViewModel: MainViewModel by viewModels()
@@ -61,7 +69,7 @@ class MainActivity : ComponentActivity() {
                         NotifyMeHereMainScreen(
                             viewModel = mainViewModel,
                             onSendToWatch = {
-                                sendInterestPointsArray(it)
+                                sendPhoto(it)
                             },
                             navigateToAddInterestPoint = {
                                 val route = if (it == null) {
@@ -70,6 +78,8 @@ class MainActivity : ComponentActivity() {
                                     "${Details.route}?detailsId=${it}"
                                 }
                                 navController.navigate(route)
+                            }, startWearableActivity = {
+                                startWearableActivity()
                             })
                     }
                     composable(
@@ -105,40 +115,82 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         dataClient.addListener(mainViewModel)
+        messageClient.addListener(mainViewModel)
+        capabilityClient.addListener(
+            mainViewModel,
+            Uri.parse("wear://"),
+            CapabilityClient.FILTER_REACHABLE
+        )
     }
 
     override fun onPause() {
         super.onPause()
         dataClient.removeListener(mainViewModel)
+        messageClient.removeListener(mainViewModel)
+        capabilityClient.removeListener(mainViewModel)
+    }
+
+    private fun startWearableActivity() {
+        lifecycleScope.launch {
+            try {
+                val nodes = capabilityClient
+                    .getCapability(WEAR_CAPABILITY, CapabilityClient.FILTER_REACHABLE)
+                    .await()
+                    .nodes
+
+                // Send a message to all nodes in parallel
+                nodes.map { node ->
+                    async {
+                        messageClient.sendMessage(node.id, START_ACTIVITY_PATH, byteArrayOf())
+                            .await()
+                    }
+                }.awaitAll()
+
+                Log.d(TAG, "Starting activity requests sent successfully")
+            } catch (cancellationException: CancellationException) {
+                throw cancellationException
+            } catch (exception: Exception) {
+                Log.d(TAG, "Starting activity failed: $exception")
+            }
+        }
     }
 
     private fun createInterestPointsDataRequest(
         interestPoints: List<InterestPoint>
     ): PutDataRequest {
-        val putDataMapReq = PutDataMapRequest.create(INTEREST_POINTS_PATH)
-        val dataMapArray = interestPoints.map { it.toDataMap() }
-        putDataMapReq.dataMap.putDataMapArrayList("interestPoints", ArrayList(dataMapArray))
+        val putDataMapReq = PutDataMapRequest.create(INTEREST_POINTS_PATH).apply {
+            val dataMapArray = interestPoints.map { it.toDataMap() }
+            dataMap.putDataMapArrayList(IMAGE_KEY, ArrayList(dataMapArray))
+            dataMap.putLong(TIME_KEY, Instant.now().epochSecond)
+        }
+
 
         return putDataMapReq.asPutDataRequest().setUrgent()
     }
 
-    private fun sendInterestPointsArray(interestPoints: List<InterestPoint>) {
+    private fun sendPhoto(interestPoints: List<InterestPoint>) {
         lifecycleScope.launch {
             try {
-                val putDataRequest = createInterestPointsDataRequest(interestPoints)
-                val result = dataClient.putDataItem(putDataRequest).await()
+                val request = createInterestPointsDataRequest(interestPoints)
+
+                val result = dataClient.putDataItem(request).await()
+
+                Log.d(TAG, "DataItem saved: $result")
             } catch (cancellationException: CancellationException) {
                 throw cancellationException
             } catch (exception: Exception) {
                 Log.d(TAG, "Saving DataItem failed: $exception")
             }
-
         }
     }
 
     companion object {
         private const val TAG = "MainActivity"
-        private const val INTEREST_POINTS_PATH = "/interest_points"
+        private const val INTEREST_POINTS_PATH = "/interest-points"
+        private const val START_ACTIVITY_PATH = "/start-activity"
+        private const val WEAR_CAPABILITY = "wear"
+        private const val IMAGE_KEY = "photo"
+        private const val TIME_KEY = "time"
     }
 
 }

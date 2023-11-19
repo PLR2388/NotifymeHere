@@ -1,8 +1,12 @@
 package fr.wonderfulappstudio.notifymehere.ui
 
 import androidx.lifecycle.ViewModel
+import com.google.android.gms.wearable.CapabilityClient
+import com.google.android.gms.wearable.CapabilityInfo
 import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.DataEventBuffer
+import com.google.android.gms.wearable.MessageClient
+import com.google.android.gms.wearable.MessageEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.wonderfulappstudio.notifymehere.model.InterestPoint
 import fr.wonderfulappstudio.notifymehere.repository.InterestPointRepository
@@ -11,10 +15,20 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(interestPointRepository: InterestPointRepository): ViewModel(),
-    DataClient.OnDataChangedListener {
+    DataClient.OnDataChangedListener,
+    MessageClient.OnMessageReceivedListener,
+    CapabilityClient.OnCapabilityChangedListener {
 
     val interestPoints: Flow<List<InterestPoint>> = interestPointRepository.interestPoints
     override fun onDataChanged(p0: DataEventBuffer) {
+
+    }
+
+    override fun onMessageReceived(p0: MessageEvent) {
+
+    }
+
+    override fun onCapabilityChanged(p0: CapabilityInfo) {
 
     }
 }

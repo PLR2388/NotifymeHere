@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -39,12 +40,16 @@ import fr.wonderfulappstudio.notifymehere.model.InterestPoint
 fun NotifyMeHereMainScreen(
     viewModel: MainViewModel = hiltViewModel(),
     navigateToAddInterestPoint: (Int?) -> Unit,
-    onSendToWatch: (List<InterestPoint>) -> Unit
+    onSendToWatch: (List<InterestPoint>) -> Unit,
+    startWearableActivity: () -> Unit
 ) {
     val interestPoints by viewModel.interestPoints.collectAsState(initial = emptyList())
 
     Scaffold(topBar = {
         TopAppBar(title = { Text("Notify me here!") }, actions = {
+            IconButton(onClick = { startWearableActivity() }) {
+                Image(imageVector = Icons.Filled.PlayArrow, contentDescription = null)
+            }
             IconButton(onClick = { onSendToWatch(interestPoints) }) {
                 Image(imageVector = Icons.AutoMirrored.Filled.Send, contentDescription = null)
             }
