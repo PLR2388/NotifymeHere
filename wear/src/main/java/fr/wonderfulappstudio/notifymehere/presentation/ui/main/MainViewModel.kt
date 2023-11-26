@@ -28,6 +28,8 @@ class MainViewModel @Inject constructor(
     DataClient.OnDataChangedListener{
     val interestPoints: Flow<List<InterestPoint>> = interestPointRepository.interestPoints
 
+    private var isNotificationGranted: Boolean = false
+
     override fun onDataChanged(dataEvents: DataEventBuffer) {
         dataEvents.forEach { event ->
             if (event.type == DataEvent.TYPE_CHANGED && event.dataItem.uri.path == INTEREST_POINTS_PATH) {
@@ -40,6 +42,9 @@ class MainViewModel @Inject constructor(
                 }
             }
         }
+    }
 
+    fun updateGrantNotificationPermission(granted: Boolean) {
+        isNotificationGranted = granted
     }
 }
