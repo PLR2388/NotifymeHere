@@ -85,6 +85,7 @@ class MainActivity : ComponentActivity() {
                 // You can now request the background location permission
                 requestBackgroundLocationPermission()
             }
+
             else -> {
                 // Request fine location first
                 locationPermissionLauncher.launch(
@@ -133,8 +134,11 @@ class MainActivity : ComponentActivity() {
 
         requestPermissions()
 
+        val id = intent.getIntExtra(locationIdKey, -1)
+
+
         setContent {
-            WearApp(mainViewModel)
+            WearApp(mainViewModel, if (id == -1) null else id)
         }
     }
 
@@ -148,10 +152,14 @@ class MainActivity : ComponentActivity() {
         super.onPause()
         dataClient.removeListener(mainViewModel)
     }
+
+    companion object {
+        const val locationIdKey = "location_id"
+    }
 }
 
 @Composable
-fun WearApp(viewModel: MainViewModel) {
+fun WearApp(viewModel: MainViewModel, id: Int?) {
     val navController = rememberSwipeDismissableNavController()
     NotifyMeHereTheme {
         SwipeDismissableNavHost(navController = navController, startDestination = Main.route) {

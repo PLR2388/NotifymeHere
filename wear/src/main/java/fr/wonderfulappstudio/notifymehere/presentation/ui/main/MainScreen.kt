@@ -35,7 +35,7 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel(), onNavigateToDetails: 
                         },
                         secondaryLabel = {
                             Text(
-                                text = "${interestPoint.position.first}; ${interestPoint.position.second}",
+                                text = "${interestPoint.position.latitude}; ${interestPoint.position.longitude}",
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
                             )
