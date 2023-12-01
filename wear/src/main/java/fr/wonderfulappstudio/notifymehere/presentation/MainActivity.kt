@@ -1,9 +1,3 @@
-/* While this template provides a good starting point for using Wear Compose, you can always
- * take a look at https://github.com/android/wear-os-samples/tree/main/ComposeStarter and
- * https://github.com/android/wear-os-samples/tree/main/ComposeAdvanced to find the most up to date
- * changes to the libraries and their usages.
- */
-
 package fr.wonderfulappstudio.notifymehere.presentation
 
 import android.Manifest
@@ -18,9 +12,12 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
@@ -76,6 +73,31 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val isPermissionGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        } else {
+            true
+        }
+        mainViewModel.updateGrantNotificationPermission(isPermissionGranted)
+        if (!isPermissionGranted) {
+            pushNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+
+        val interestPointId = intent.getIntExtra(locationIdKey, -1)
+
+        val detailsId = if (interestPointId == -1) null else interestPointId
+
+        requestPermissions()
+        setContent {
+            WearApp(mainViewModel, detailsId)
+        }
+    }
+
     private fun requestPermissions() {
         when (PackageManager.PERMISSION_GRANTED) {
             ContextCompat.checkSelfPermission(
@@ -117,31 +139,6 @@ class MainActivity : ComponentActivity() {
         ContextCompat.startForegroundService(this, serviceIntent)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val isPermissionGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.POST_NOTIFICATIONS
-            ) == PackageManager.PERMISSION_GRANTED
-        } else {
-            true
-        }
-        mainViewModel.updateGrantNotificationPermission(isPermissionGranted)
-        if (!isPermissionGranted) {
-            pushNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-        }
-
-        requestPermissions()
-
-        val id = intent.getIntExtra(locationIdKey, -1)
-
-
-        setContent {
-            WearApp(mainViewModel, if (id == -1) null else id)
-        }
-    }
-
 
     override fun onResume() {
         super.onResume()
@@ -159,16 +156,33 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun WearApp(viewModel: MainViewModel, id: Int?) {
+fun WearApp(viewModel: MainViewModel, detailsId: Int?) {
     val navController = rememberSwipeDismissableNavController()
+
+    // Use LaunchedEffect to navigate once after composition
+    LaunchedEffect(Unit) {
+        if (detailsId != null) {
+            navController.navigate(Details.route + "/${detailsId}")
+        }
+    }
+
     NotifyMeHereTheme {
-        SwipeDismissableNavHost(navController = navController, startDestination = Main.route) {
+        SwipeDismissableNavHost(
+            navController = navController,
+            startDestination = Main.route
+        ) {
             composable(Main.route) {
                 MainScreen(viewModel = viewModel, onNavigateToDetails = {
-                    navController.navigate(Details.route)
+                    navController.navigate(Details.route + "/${it.id}")
                 })
             }
-            composable(Details.route) {
+            composable(
+                Details.route + "/{detailsId}",
+                arguments = listOf(navArgument("detailsId") {
+                    defaultValue = -1
+                    type = NavType.IntType
+                })
+            ) {
                 DetailsScreen()
             }
         }

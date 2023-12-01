@@ -20,6 +20,7 @@ import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
 import fr.wonderfulappstudio.notifymehere.R
 import fr.wonderfulappstudio.notifymehere.presentation.MainActivity
+import fr.wonderfulappstudio.notifymehere.presentation.MainActivity.Companion.locationIdKey
 import fr.wonderfulappstudio.notifymehere.presentation.NotifyMeHereApplication
 import fr.wonderfulappstudio.notifymehere.presentation.NotifyMeHereApplication.Companion.MAIN_CHANNEL_ID
 import fr.wonderfulappstudio.notifymehere.presentation.NotifyMeHereApplication.Companion.MAIN_SERVICE_NOTIFICATION_ID
@@ -66,7 +67,7 @@ class LocationService() : Service() {
             val intent = Intent(context, MainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             }
-            intent.putExtra("location_id", id)
+            intent.putExtra(locationIdKey, id)
 
             val pendingIntent: PendingIntent =
                 PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
