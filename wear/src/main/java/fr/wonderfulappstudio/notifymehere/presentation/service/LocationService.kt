@@ -33,6 +33,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.util.Date
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -84,8 +85,14 @@ class LocationService() : Service() {
     }
 
     private fun handleInterestPoints(interestPoints: List<InterestPoint>) {
+        val currentDateTimestamp = Date().time
         // Do something with the list of interest points
-        this.interestPoints = interestPoints
+        this.interestPoints =
+            interestPoints.filter {
+                !it.alreadyNotify &&
+                        (it.startDate == null || it.startDate >= currentDateTimestamp) &&
+                        (it.endDate == null || it.endDate <= currentDateTimestamp)
+            }
     }
 
     fun sendNotification(title: String, content: String, id: Int) {
@@ -141,9 +148,8 @@ class LocationService() : Service() {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(p0: LocationResult) {
                 val lastLocation = p0.lastLocation ?: return
-                val limitedList = interestPoints.filter { !it.alreadyNotify }
                 Log.e("LOCATION SERVICE", "notificationDistance=${notificationDistance}")
-                for (interestPoint in limitedList) {
+                for (interestPoint in interestPoints) {
                     if (interestPoint.position.distanceTo(lastLocation) < notificationDistance) {
                         interestPoint.id?.let {
                             sendNotification(
@@ -177,7 +183,7 @@ class LocationService() : Service() {
 
     private fun createNotification(): Notification {
         val builder: Notification.Builder =
-            Notification.Builder(this, NotifyMeHereApplication.MAIN_CHANNEL_ID)
+            Notification.Builder(this, MAIN_CHANNEL_ID)
                 .setContentTitle("Notify me Here!")
                 .setContentText("Running...")
         return builder.build()
