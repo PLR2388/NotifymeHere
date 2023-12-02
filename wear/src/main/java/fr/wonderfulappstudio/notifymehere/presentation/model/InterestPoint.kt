@@ -10,7 +10,7 @@ data class InterestPoint(
     val position: Location,
     val startDate: Long? = null,
     val endDate: Long? = null,
-    val alreadyNotify: Boolean = false
+    var alreadyNotify: Boolean = false
 ) {
     fun toRoomInterestPoint(): RoomInterestPoint {
         return if (id != null) {
@@ -50,7 +50,8 @@ data class InterestPoint(
                 roomInterestPoint.description.ifEmpty { null },
                 location,
                 roomInterestPoint.startDate.takeIf { it > 0 },
-                roomInterestPoint.endDate.takeIf { it > 0 }
+                roomInterestPoint.endDate.takeIf { it > 0 },
+                roomInterestPoint.alreadyNotify
             )
         }
 

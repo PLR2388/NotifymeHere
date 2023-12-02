@@ -14,5 +14,5 @@ import kotlinx.coroutines.SupervisorJob
 object ServiceModule {
     @Provides
     @ServiceScoped
-    fun provideCoroutineScope(): CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+    fun provideCoroutineScope(): CoroutineScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 }
