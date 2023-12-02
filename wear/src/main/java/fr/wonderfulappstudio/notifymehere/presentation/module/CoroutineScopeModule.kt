@@ -17,9 +17,5 @@ object CoroutineScopeModule {
 
     @Provides
     @Singleton
-    fun provideIoCoroutineScope(): CoroutineScope = CoroutineScope(Dispatchers.IO)
-
-    @Provides
-    @Singleton
     fun provideContext(@ApplicationContext context: Context): Context = context
 }

@@ -12,4 +12,8 @@ class InterestPointRepository @Inject constructor(private val datasource: Intere
 
     suspend fun insertList(interestPoints: List<InterestPoint>) =
         datasource.insertList(interestPoints)
+
+    suspend fun update(interestPoint: InterestPoint) = datasource.update(interestPoint)
+
+    suspend fun delete(interestPoint: InterestPoint) = datasource.delete(interestPoint)
 }

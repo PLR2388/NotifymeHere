@@ -162,7 +162,7 @@ fun WearApp(viewModel: MainViewModel, detailsId: Int?) {
     // Use LaunchedEffect to navigate once after composition
     LaunchedEffect(Unit) {
         if (detailsId != null) {
-            navController.navigate(Details.route + "/${detailsId}")
+            navController.navigate(Details.route + "/${detailsId}/${true}")
         }
     }
 
@@ -173,17 +173,22 @@ fun WearApp(viewModel: MainViewModel, detailsId: Int?) {
         ) {
             composable(Main.route) {
                 MainScreen(viewModel = viewModel, onNavigateToDetails = {
-                    navController.navigate(Details.route + "/${it.id}")
+                    navController.navigate(Details.route + "/${it.id}/${false}")
                 })
             }
             composable(
-                Details.route + "/{detailsId}",
+                Details.route + "/{detailsId}/{stopNotification}",
                 arguments = listOf(navArgument("detailsId") {
                     defaultValue = -1
                     type = NavType.IntType
+                }, navArgument("stopNotification") {
+                    defaultValue = false
+                    type = NavType.BoolType
                 })
             ) {
-                DetailsScreen()
+                DetailsScreen {
+                    navController.popBackStack()
+                }
             }
         }
     }

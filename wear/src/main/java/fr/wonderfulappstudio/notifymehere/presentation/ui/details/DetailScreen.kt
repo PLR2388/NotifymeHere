@@ -16,12 +16,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.wear.compose.material.PositionIndicator
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
+import androidx.wear.compose.material.Chip
+import androidx.wear.compose.material.ChipDefaults
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.TimeText
 import java.util.Date
 
 @Composable
-fun DetailsScreen(viewModel: DetailViewModel = hiltViewModel()) {
+fun DetailsScreen(viewModel: DetailViewModel = hiltViewModel(), onBack: () -> Unit) {
     val positionScrollState = rememberScrollState()
     Scaffold(
         timeText = { TimeText() },
@@ -35,7 +37,11 @@ fun DetailsScreen(viewModel: DetailViewModel = hiltViewModel()) {
                 }
                 if (it.description != null) {
                     item {
-                        Text("Description", fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+                        Text(
+                            "Description",
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
+                        )
 
                     }
                     item {
@@ -45,7 +51,7 @@ fun DetailsScreen(viewModel: DetailViewModel = hiltViewModel()) {
                                 .fillMaxWidth()
                                 .padding(vertical = 8.dp)
                                 .background(Color.DarkGray),
-                            fontWeight= FontWeight.Light,
+                            fontWeight = FontWeight.Light,
                             textAlign = TextAlign.Start
                         )
                     }
@@ -74,10 +80,25 @@ fun DetailsScreen(viewModel: DetailViewModel = hiltViewModel()) {
                         Text(Date(it.endDate).toString())
                     }
                 }
-            } ?:
+
                 item {
-                    Text("An error occurs")
+                    if (it.alreadyNotify) {
+                        Chip(
+                            label = { Text("Activate notification again") },
+                            onClick = viewModel::reactivateNotification
+                        )
+                    }
                 }
+
+                item {
+                    Chip(label = { Text("Delete interest point") }, onClick = {
+                        viewModel.deleteInterestPoint()
+                        onBack()
+                    }, colors = ChipDefaults.chipColors(backgroundColor = Color.Red))
+                }
+            } ?: item {
+                Text("An error occurs")
+            }
 
         }
     }
@@ -88,5 +109,5 @@ fun DetailsScreen(viewModel: DetailViewModel = hiltViewModel()) {
 @Preview
 @Composable
 fun DetailsScreenPreview() {
-    DetailsScreen()
+    DetailsScreen {}
 }

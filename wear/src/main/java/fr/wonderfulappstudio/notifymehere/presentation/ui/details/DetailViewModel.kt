@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.wonderfulappstudio.notifymehere.presentation.model.InterestPoint
 import fr.wonderfulappstudio.notifymehere.presentation.repository.InterestPointRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,6 +21,7 @@ class DetailViewModel @Inject constructor(
 
 
     private val detailsId: Int? = savedStateHandle.get<Int>("detailsId")
+    private val stopNotification: Boolean = savedStateHandle.get<Boolean>("stopNotification") == true
 
     var interestPoint: InterestPoint? by mutableStateOf(null)
         private set
@@ -35,8 +37,30 @@ class DetailViewModel @Inject constructor(
                     } catch (e: Exception) {
                         null
                     }
-
+                    if (stopNotification) {
+                        interestPoint = interestPoint?.copy(alreadyNotify = true)
+                        interestPoint?.let {
+                            viewModelScope.launch(Dispatchers.IO) {
+                                interestPointRepository.update(it)
+                            }
+                        }
+                    }
                 }
+            }
+        }
+    }
+
+    fun deleteInterestPoint() {
+        viewModelScope.launch(Dispatchers.IO) {
+            interestPoint?.let { interestPointRepository.delete(it) }
+        }
+    }
+
+    fun reactivateNotification() {
+        interestPoint = interestPoint?.copy(alreadyNotify = false)
+        interestPoint?.let {
+            viewModelScope.launch(Dispatchers.IO) {
+                interestPointRepository.update(it)
             }
         }
     }

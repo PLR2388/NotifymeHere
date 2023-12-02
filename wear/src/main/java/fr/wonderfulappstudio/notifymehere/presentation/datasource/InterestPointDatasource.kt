@@ -18,4 +18,12 @@ class InterestPointDatasource @Inject constructor(private val interestPointDao: 
     suspend fun insertList(interestPoints: List<InterestPoint>) {
         interestPointDao.insertList(interestPoints.map { it.toRoomInterestPoint() })
     }
+
+    suspend fun update(interestPoint: InterestPoint) {
+        interestPointDao.update(interestPoint.toRoomInterestPoint())
+    }
+
+    suspend fun delete(interestPoint: InterestPoint) {
+        interestPointDao.delete(interestPoint.toRoomInterestPoint())
+    }
 }

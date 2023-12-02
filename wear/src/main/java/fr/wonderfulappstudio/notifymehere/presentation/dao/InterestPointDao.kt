@@ -1,6 +1,7 @@
 package fr.wonderfulappstudio.notifymehere.presentation.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -21,4 +22,7 @@ interface InterestPointDao {
 
     @Query("SELECT * FROM RoomInterestPoint")
     fun getAll(): Flow<List<RoomInterestPoint>>
+
+    @Delete
+    fun delete(roomInterestPoint: RoomInterestPoint)
 }

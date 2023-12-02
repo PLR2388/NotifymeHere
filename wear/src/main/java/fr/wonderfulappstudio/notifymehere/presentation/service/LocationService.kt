@@ -27,6 +27,9 @@ import fr.wonderfulappstudio.notifymehere.presentation.NotifyMeHereApplication.C
 import fr.wonderfulappstudio.notifymehere.presentation.model.InterestPoint
 import fr.wonderfulappstudio.notifymehere.presentation.repository.InterestPointRepository
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -37,7 +40,7 @@ class LocationService() : Service() {
     lateinit var interestPointRepository: InterestPointRepository
 
     @Inject
-    lateinit var coroutineScope: CoroutineScope
+    lateinit var serviceScope: CoroutineScope
 
     @Inject
     lateinit var context: Context
@@ -53,12 +56,20 @@ class LocationService() : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        coroutineScope.launch {
-            interestPointRepository.interestPoints.collect { interestPoints = it }
+        serviceScope.launch {
+            interestPointRepository.interestPoints.collect { interestPoints ->
+                // Handle the updated list of interest points
+                handleInterestPoints(interestPoints)
+            }
         }
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         setupLocationCallback()
+    }
+
+    private fun handleInterestPoints(interestPoints: List<InterestPoint>) {
+        // Do something with the list of interest points
+        this.interestPoints = interestPoints
     }
 
     fun sendNotification(title: String, content: String, id: Int) {
@@ -110,7 +121,8 @@ class LocationService() : Service() {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(p0: LocationResult) {
                 val lastLocation = p0.lastLocation ?: return
-                for (interestPoint in interestPoints) {
+                val limitedList = interestPoints.filter { !it.alreadyNotify }
+                for (interestPoint in limitedList) {
                     if (interestPoint.position.distanceTo(lastLocation) < 500) {
                         interestPoint.id?.let {
                             sendNotification("You're near an interest point!", interestPoint.name,
@@ -152,6 +164,9 @@ class LocationService() : Service() {
     override fun onDestroy() {
         super.onDestroy()
         fusedLocationClient.removeLocationUpdates(locationCallback)
+
+        // Cancel the coroutine scope when the service is destroyed
+        serviceScope.cancel()
     }
 
 }
