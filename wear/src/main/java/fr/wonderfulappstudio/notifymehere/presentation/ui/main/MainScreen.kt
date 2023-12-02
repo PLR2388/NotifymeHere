@@ -1,11 +1,15 @@
 package fr.wonderfulappstudio.notifymehere.presentation.ui.main
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.items
@@ -31,6 +35,9 @@ fun MainScreen(
                     Text("You haven't send any interest point!")
                 }
             } else {
+                item {
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
                 items(interestPoints) { interestPoint ->
                     Chip(
                         onClick = { onNavigateToDetails(interestPoint) },
@@ -52,12 +59,14 @@ fun MainScreen(
                     )
                 }
                 item {
-                    Button(onClick = onNavigateToSettings) {
+                    Chip(label = {
+                        Text("Settings")
+                    }, onClick = onNavigateToSettings, icon = {
                         Image(
                             painterResource(id = R.drawable.ic_settings),
                             contentDescription = null
                         )
-                    }
+                    })
                 }
             }
 

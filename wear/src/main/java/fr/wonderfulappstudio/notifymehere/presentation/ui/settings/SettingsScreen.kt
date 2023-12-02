@@ -39,7 +39,7 @@ fun SettingsScreen(
                 InlineSlider(
                     value = notificationDistance?.toInt() ?: 500,
                     onValueChange = viewModel::changeNotificationDistance,
-                    valueProgression = IntProgression.fromClosedRange(100, 1000, 50),
+                    valueProgression = IntProgression.fromClosedRange(50, 1000, 50),
                     decreaseIcon = {
                         Image(
                             painter = painterResource(id = R.drawable.ic_minus),
