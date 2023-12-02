@@ -24,32 +24,37 @@ import fr.wonderfulappstudio.notifymehere.presentation.MainActivity.Companion.lo
 import fr.wonderfulappstudio.notifymehere.presentation.NotifyMeHereApplication
 import fr.wonderfulappstudio.notifymehere.presentation.NotifyMeHereApplication.Companion.MAIN_CHANNEL_ID
 import fr.wonderfulappstudio.notifymehere.presentation.NotifyMeHereApplication.Companion.MAIN_SERVICE_NOTIFICATION_ID
+import fr.wonderfulappstudio.notifymehere.presentation.manager.DataStoreManager
 import fr.wonderfulappstudio.notifymehere.presentation.model.InterestPoint
 import fr.wonderfulappstudio.notifymehere.presentation.repository.InterestPointRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class LocationService() : Service() {
 
+    private val serviceScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
+
     @Inject
     lateinit var interestPointRepository: InterestPointRepository
 
     @Inject
-    lateinit var serviceScope: CoroutineScope
+    lateinit var context: Context
 
     @Inject
-    lateinit var context: Context
+    lateinit var dataStoreManager: DataStoreManager
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
     private val locationRequest: LocationRequest = LocationRequest.Builder(10000L).build()
 
     private lateinit var interestPoints: List<InterestPoint>
+    private var notificationDistance: Float = 500.0f
 
     override fun onBind(p0: Intent?): IBinder? = null
 
@@ -63,8 +68,19 @@ class LocationService() : Service() {
             }
         }
 
+        serviceScope.launch {
+            dataStoreManager.readNotificationDistance.collect { distance ->
+                Log.d("LocationService", "Collected notification distance: $distance")
+                handleNotificationDistance(distance)
+            }
+        }
+
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         setupLocationCallback()
+    }
+
+    private fun handleNotificationDistance(distance: Float) {
+        this.notificationDistance = distance
     }
 
     private fun handleInterestPoints(interestPoints: List<InterestPoint>) {
@@ -81,7 +97,12 @@ class LocationService() : Service() {
             intent.putExtra(locationIdKey, id)
 
             val pendingIntent: PendingIntent =
-                PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                PendingIntent.getActivity(
+                    context,
+                    0,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
 
             // Build the notification
             val builder = NotificationCompat.Builder(context, MAIN_CHANNEL_ID)
@@ -121,10 +142,12 @@ class LocationService() : Service() {
             override fun onLocationResult(p0: LocationResult) {
                 val lastLocation = p0.lastLocation ?: return
                 val limitedList = interestPoints.filter { !it.alreadyNotify }
+                Log.e("LOCATION SERVICE", "notificationDistance=${notificationDistance}")
                 for (interestPoint in limitedList) {
-                    if (interestPoint.position.distanceTo(lastLocation) < 500) {
+                    if (interestPoint.position.distanceTo(lastLocation) < notificationDistance) {
                         interestPoint.id?.let {
-                            sendNotification("You're near an interest point!", interestPoint.name,
+                            sendNotification(
+                                "You're near an interest point!", interestPoint.name,
                                 it
                             )
                         }

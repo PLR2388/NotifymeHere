@@ -27,9 +27,11 @@ import fr.wonderfulappstudio.notifymehere.presentation.service.LocationService
 import fr.wonderfulappstudio.notifymehere.presentation.theme.NotifyMeHereTheme
 import fr.wonderfulappstudio.notifymehere.presentation.ui.Details
 import fr.wonderfulappstudio.notifymehere.presentation.ui.Main
+import fr.wonderfulappstudio.notifymehere.presentation.ui.Settings
 import fr.wonderfulappstudio.notifymehere.presentation.ui.details.DetailsScreen
 import fr.wonderfulappstudio.notifymehere.presentation.ui.main.MainScreen
 import fr.wonderfulappstudio.notifymehere.presentation.ui.main.MainViewModel
+import fr.wonderfulappstudio.notifymehere.presentation.ui.settings.SettingsScreen
 
 
 @AndroidEntryPoint
@@ -174,6 +176,8 @@ fun WearApp(viewModel: MainViewModel, detailsId: Int?) {
             composable(Main.route) {
                 MainScreen(viewModel = viewModel, onNavigateToDetails = {
                     navController.navigate(Details.route + "/${it.id}/${false}")
+                }, onNavigateToSettings = {
+                    navController.navigate(Settings.route)
                 })
             }
             composable(
@@ -189,6 +193,9 @@ fun WearApp(viewModel: MainViewModel, detailsId: Int?) {
                 DetailsScreen {
                     navController.popBackStack()
                 }
+            }
+            composable(Settings.route) {
+                SettingsScreen()
             }
         }
     }

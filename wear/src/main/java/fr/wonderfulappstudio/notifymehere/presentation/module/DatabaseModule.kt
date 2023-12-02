@@ -10,6 +10,7 @@ import dagger.hilt.components.SingletonComponent
 import fr.wonderfulappstudio.notifymehere.presentation.dao.InterestPointDao
 import fr.wonderfulappstudio.notifymehere.presentation.data.NotifyMeHereDatabase
 import fr.wonderfulappstudio.notifymehere.presentation.datasource.InterestPointDatasource
+import fr.wonderfulappstudio.notifymehere.presentation.manager.DataStoreManager
 import fr.wonderfulappstudio.notifymehere.presentation.repository.InterestPointRepository
 import javax.inject.Singleton
 
@@ -41,4 +42,6 @@ object DatabaseModule {
     fun provideInterestPointRepository(interestPointDatasource: InterestPointDatasource): InterestPointRepository =
         InterestPointRepository(interestPointDatasource)
 
+    @Provides
+    fun provideDataStoreManager(@ApplicationContext context: Context): DataStoreManager = DataStoreManager(context)
 }

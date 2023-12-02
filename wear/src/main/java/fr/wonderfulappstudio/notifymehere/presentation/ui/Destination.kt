@@ -11,3 +11,7 @@ object Main: Destination {
 object Details: Destination {
     override val route: String = "Details"
 }
+
+object Settings: Destination {
+    override val route: String = "Settings"
+}

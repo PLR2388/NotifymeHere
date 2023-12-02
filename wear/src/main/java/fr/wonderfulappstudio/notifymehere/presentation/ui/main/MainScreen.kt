@@ -20,7 +20,8 @@ import fr.wonderfulappstudio.notifymehere.presentation.model.InterestPoint
 @Composable
 fun MainScreen(
     viewModel: MainViewModel = hiltViewModel(),
-    onNavigateToDetails: (InterestPoint) -> Unit
+    onNavigateToDetails: (InterestPoint) -> Unit,
+    onNavigateToSettings: () -> Unit
 ) {
     val interestPoints by viewModel.interestPoints.collectAsState(initial = emptyList())
     Scaffold(timeText = { TimeText() }) {
@@ -51,7 +52,7 @@ fun MainScreen(
                     )
                 }
                 item {
-                    Button(onClick = { /*TODO*/ }) {
+                    Button(onClick = onNavigateToSettings) {
                         Image(
                             painterResource(id = R.drawable.ic_settings),
                             contentDescription = null
