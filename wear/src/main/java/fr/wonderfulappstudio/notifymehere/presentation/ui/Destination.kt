@@ -10,6 +10,12 @@ object Main: Destination {
 
 object Details: Destination {
     override val route: String = "Details"
+
+    const val detailsIdKey: String = "detailsId"
+    const val stopNotificationKey: String = "stopNotification"
+
+    fun buildRouteWithArguments(detailsId: Int?, stopNotification: Boolean) =
+        "$route/$detailsId/$stopNotification"
 }
 
 object Settings: Destination {

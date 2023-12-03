@@ -8,8 +8,6 @@ import javax.inject.Inject
 class InterestPointRepository @Inject constructor(private val datasource: InterestPointDatasource) {
     val interestPoints: Flow<List<InterestPoint>> = datasource.interestPoints
 
-    suspend fun insert(interestPoint: InterestPoint) = datasource.insert(interestPoint)
-
     suspend fun insertList(interestPoints: List<InterestPoint>) =
         datasource.insertList(interestPoints)
 

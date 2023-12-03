@@ -12,7 +12,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.wear.compose.material.PositionIndicator
 import androidx.wear.compose.material.Scaffold
@@ -22,7 +21,8 @@ import androidx.wear.compose.material.ChipDefaults
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.TimeText
 import fr.wonderfulappstudio.notifymehere.R
-import java.util.Date
+import fr.wonderfulappstudio.notifymehere.presentation.extension.convertMillisToDate
+import fr.wonderfulappstudio.notifymehere.presentation.theme.Size
 
 @Composable
 fun DetailsScreen(viewModel: DetailViewModel = hiltViewModel(), onBack: () -> Unit) {
@@ -31,7 +31,7 @@ fun DetailsScreen(viewModel: DetailViewModel = hiltViewModel(), onBack: () -> Un
         timeText = { TimeText() },
         positionIndicator = { PositionIndicator(scrollState = positionScrollState) }) {
         ScalingLazyColumn(
-            contentPadding = PaddingValues(horizontal = 8.dp)
+            contentPadding = PaddingValues(horizontal = Size.medium)
         ) {
             viewModel.interestPoint?.let {
                 item {
@@ -51,7 +51,7 @@ fun DetailsScreen(viewModel: DetailViewModel = hiltViewModel(), onBack: () -> Un
                             it.description,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 8.dp)
+                                .padding(vertical = Size.medium)
                                 .background(Color.DarkGray),
                             fontWeight = FontWeight.Light,
                             textAlign = TextAlign.Start
@@ -70,7 +70,7 @@ fun DetailsScreen(viewModel: DetailViewModel = hiltViewModel(), onBack: () -> Un
                         Text(stringResource(R.string.label_start_date), fontWeight = FontWeight.Bold)
                     }
                     item {
-                        Text(Date(it.startDate).toString())
+                        Text(it.startDate.convertMillisToDate())
                     }
                 }
 
@@ -79,7 +79,7 @@ fun DetailsScreen(viewModel: DetailViewModel = hiltViewModel(), onBack: () -> Un
                         Text(stringResource(R.string.label_end_date), fontWeight = FontWeight.Bold)
                     }
                     item {
-                        Text(Date(it.endDate).toString())
+                        Text(it.endDate.convertMillisToDate())
                     }
                 }
 

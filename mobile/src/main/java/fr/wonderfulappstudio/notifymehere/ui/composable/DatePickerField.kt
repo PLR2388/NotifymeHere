@@ -18,20 +18,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import fr.wonderfulappstudio.notifymehere.R
-import fr.wonderfulappstudio.notifymehere.extension.convertMillisToDate
 
 @Composable
-fun DatePickerField(label: String, readOnly: Boolean, onDateSelected: (Long?) -> Unit) {
-    var date by remember {
-        mutableStateOf("-")
-    }
-
+fun DatePickerField(label: String, text: String, readOnly: Boolean, onDateSelected: (Long?) -> Unit) {
     var showDatePicker by remember {
         mutableStateOf(false)
     }
 
     OutlinedTextField(
-        value = date,
+        value = text,
         onValueChange = {},
         readOnly = true,
         label = {
@@ -54,7 +49,6 @@ fun DatePickerField(label: String, readOnly: Boolean, onDateSelected: (Long?) ->
         DatePicker(
             onDateSelected = {
                 onDateSelected(it)
-                date = it?.convertMillisToDate() ?: ""
             },
             onDismiss = { showDatePicker = false }
         )

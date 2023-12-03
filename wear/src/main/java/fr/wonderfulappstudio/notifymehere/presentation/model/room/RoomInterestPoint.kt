@@ -1,4 +1,4 @@
-package fr.wonderfulappstudio.notifymehere.model.room
+package fr.wonderfulappstudio.notifymehere.presentation.model.room
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

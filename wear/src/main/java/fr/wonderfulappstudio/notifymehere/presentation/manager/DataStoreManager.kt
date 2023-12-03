@@ -1,12 +1,11 @@
 package fr.wonderfulappstudio.notifymehere.presentation.manager
 
 import android.content.Context
-import android.util.Log
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import fr.wonderfulappstudio.notifymehere.presentation.theme.Distance
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 
 // Create a property delegate for the Preferences DataStore
@@ -23,7 +22,7 @@ class DataStoreManager(context: Context) {
     val readNotificationDistance: Flow<Float> = dataStore.data
         .map { preferences ->
             // Return the float value or null if it doesn't exist
-            preferences[NOTIFICATION_DISTANCE_KEY] ?: 500.0f
+            preferences[NOTIFICATION_DISTANCE_KEY] ?: Distance.defaultNotificationDistance.toFloat()
         }
 
     // Suspend function to write a float value to DataStore

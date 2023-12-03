@@ -1,4 +1,4 @@
-package fr.wonderfulappstudio.notifymehere.module
+package fr.wonderfulappstudio.notifymehere.presentation.module
 
 import android.content.Context
 import androidx.room.Room

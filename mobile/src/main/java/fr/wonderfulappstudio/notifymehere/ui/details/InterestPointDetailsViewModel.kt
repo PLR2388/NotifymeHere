@@ -7,6 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.wonderfulappstudio.notifymehere.Details
 import fr.wonderfulappstudio.notifymehere.model.InterestPoint
 import fr.wonderfulappstudio.notifymehere.repository.InterestPointRepository
 import kotlinx.coroutines.Dispatchers
@@ -16,12 +17,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class InterestPointDetailsViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
     private val interestPointRepository: InterestPointRepository
 ) :
     ViewModel() {
 
-    private var detailsId: Int? = savedStateHandle.get<Int>("detailsId")
+    private var detailsId: Int? = null
 
     var state: InterestPointDetailsState by mutableStateOf(InterestPointDetailsState.Add)
 
@@ -39,15 +39,7 @@ class InterestPointDetailsViewModel @Inject constructor(
     var showSuccess: Boolean by mutableStateOf(false)
         private set
 
-    init {
-        val position = savedStateHandle.get<Pair<Double, Double>>("position")
-        setDetailsId(detailsId)
-        if (position != null) {
-            uiState = uiState.copy(gpsPosition = position)
-        }
-    }
-
-    fun setDetailsId(detailsId: Int?) {
+    fun initInterestPoint(detailsId: Int?) {
         this.detailsId = detailsId
         if (detailsId == null || detailsId == -1) {
             state = InterestPointDetailsState.Add
@@ -70,8 +62,8 @@ class InterestPointDetailsViewModel @Inject constructor(
                         )
                     }
                 }
-
             }
+
         }
     }
 
@@ -115,7 +107,7 @@ class InterestPointDetailsViewModel @Inject constructor(
             isLoading = false
         } else {
             val interestPoint = buildInterestPoint()
-            viewModelScope.launch {
+            viewModelScope.launch(Dispatchers.IO) {
                 if (interestPoint.id == null) {
                     interestPointRepository.insert(interestPoint)
                 } else {

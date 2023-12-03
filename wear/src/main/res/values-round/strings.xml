@@ -12,4 +12,5 @@
     <string name="question_accuracy">How close to a location should you be notified?</string>
     <string name="label_accuracy">Current distance</string>
     <string name="abbreviation_meter">%1$s m</string>
+    <string name="text_in_progress">Running…</string>
 </resources>

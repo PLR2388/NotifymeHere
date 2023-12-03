@@ -2,8 +2,6 @@ package fr.wonderfulappstudio.notifymehere.presentation.ui.settings
 
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -19,6 +17,8 @@ import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.TimeText
 import fr.wonderfulappstudio.notifymehere.R
+import fr.wonderfulappstudio.notifymehere.presentation.theme.Distance
+import fr.wonderfulappstudio.notifymehere.presentation.theme.Size
 
 @Composable
 fun SettingsScreen(
@@ -35,18 +35,27 @@ fun SettingsScreen(
                 Text(stringResource(R.string.label_accuracy))
             }
             item {
-                Text(text = stringResource(R.string.abbreviation_meter, notificationDistance ?: 500))
+                Text(
+                    text = stringResource(
+                        R.string.abbreviation_meter,
+                        notificationDistance ?: Distance.defaultNotificationDistance
+                    )
+                )
             }
             item {
                 InlineSlider(
-                    value = notificationDistance?.toInt() ?: 500,
+                    value = notificationDistance?.toInt() ?: Distance.defaultNotificationDistance,
                     onValueChange = viewModel::changeNotificationDistance,
-                    valueProgression = IntProgression.fromClosedRange(50, 1000, 50),
+                    valueProgression = IntProgression.fromClosedRange(
+                        Distance.minNotificationDistance,
+                        Distance.maxNotificationDistance,
+                        Distance.stepNotificationDistance
+                    ),
                     decreaseIcon = {
                         Image(
                             painter = painterResource(id = R.drawable.ic_minus),
                             contentDescription = null,
-                            modifier = Modifier.padding(vertical= 8.dp)
+                            modifier = Modifier.padding(vertical = Size.medium)
                         )
                     },
                     increaseIcon = {

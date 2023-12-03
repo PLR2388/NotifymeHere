@@ -1,8 +1,6 @@
 package fr.wonderfulappstudio.notifymehere.presentation
 
 import android.Manifest
-import android.R
-import android.app.Notification
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -14,7 +12,6 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.core.app.ActivityCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
@@ -87,7 +84,9 @@ class MainActivity : ComponentActivity() {
         }
         mainViewModel.updateGrantNotificationPermission(isPermissionGranted)
         if (!isPermissionGranted) {
-            pushNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                pushNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
         }
 
         val interestPointId = intent.getIntExtra(locationIdKey, -1)
@@ -164,7 +163,7 @@ fun WearApp(viewModel: MainViewModel, detailsId: Int?) {
     // Use LaunchedEffect to navigate once after composition
     LaunchedEffect(Unit) {
         if (detailsId != null) {
-            navController.navigate(Details.route + "/${detailsId}/${true}")
+            navController.navigate(Details.buildRouteWithArguments(detailsId, true))
         }
     }
 
@@ -175,17 +174,17 @@ fun WearApp(viewModel: MainViewModel, detailsId: Int?) {
         ) {
             composable(Main.route) {
                 MainScreen(viewModel = viewModel, onNavigateToDetails = {
-                    navController.navigate(Details.route + "/${it.id}/${false}")
+                    navController.navigate(Details.buildRouteWithArguments(it.id, false))
                 }, onNavigateToSettings = {
                     navController.navigate(Settings.route)
                 })
             }
             composable(
-                Details.route + "/{detailsId}/{stopNotification}",
-                arguments = listOf(navArgument("detailsId") {
+                Details.route + "/{${Details.detailsIdKey}}/{${Details.stopNotificationKey}}",
+                arguments = listOf(navArgument(Details.detailsIdKey) {
                     defaultValue = -1
                     type = NavType.IntType
-                }, navArgument("stopNotification") {
+                }, navArgument(Details.stopNotificationKey) {
                     defaultValue = false
                     type = NavType.BoolType
                 })

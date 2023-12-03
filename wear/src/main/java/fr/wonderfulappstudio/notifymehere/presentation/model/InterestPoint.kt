@@ -1,7 +1,7 @@
 package fr.wonderfulappstudio.notifymehere.presentation.model
 
 import android.location.Location
-import fr.wonderfulappstudio.notifymehere.model.room.RoomInterestPoint
+import fr.wonderfulappstudio.notifymehere.presentation.model.room.RoomInterestPoint
 
 data class InterestPoint(
     val id: Int?,

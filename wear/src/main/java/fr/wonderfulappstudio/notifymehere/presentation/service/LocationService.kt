@@ -21,7 +21,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import fr.wonderfulappstudio.notifymehere.R
 import fr.wonderfulappstudio.notifymehere.presentation.MainActivity
 import fr.wonderfulappstudio.notifymehere.presentation.MainActivity.Companion.locationIdKey
-import fr.wonderfulappstudio.notifymehere.presentation.NotifyMeHereApplication
 import fr.wonderfulappstudio.notifymehere.presentation.NotifyMeHereApplication.Companion.MAIN_CHANNEL_ID
 import fr.wonderfulappstudio.notifymehere.presentation.NotifyMeHereApplication.Companion.MAIN_SERVICE_NOTIFICATION_ID
 import fr.wonderfulappstudio.notifymehere.presentation.manager.DataStoreManager
@@ -31,13 +30,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.Date
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class LocationService() : Service() {
+class LocationService : Service() {
 
     private val serviceScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
@@ -184,8 +182,8 @@ class LocationService() : Service() {
     private fun createNotification(): Notification {
         val builder: Notification.Builder =
             Notification.Builder(this, MAIN_CHANNEL_ID)
-                .setContentTitle("Notify me Here!")
-                .setContentText("Running...")
+                .setContentTitle(context.getString(R.string.app_name))
+                .setContentText(context.getString(R.string.text_in_progress))
         return builder.build()
     }
 

@@ -39,10 +39,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import fr.wonderfulappstudio.notifymehere.R
 import fr.wonderfulappstudio.notifymehere.extension.showToast
 import fr.wonderfulappstudio.notifymehere.model.InterestPoint
+import fr.wonderfulappstudio.notifymehere.theme.Size
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NotifyMeHereMainScreen(
+fun MainScreen(
     viewModel: MainViewModel = hiltViewModel(),
     navigateToAddInterestPoint: (Int?) -> Unit,
     onSendToWatch: (List<InterestPoint>) -> Unit,
@@ -91,7 +92,7 @@ fun NotifyMeHereMainScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp)
+                .padding(horizontal = Size.medium)
         ) {
             if (interestPoints.isEmpty()) {
                 item { Text(text = stringResource(R.string.text_empty_interest_points)) }
@@ -114,13 +115,13 @@ fun InterestPointCard(interestPoint: InterestPoint, navigateTo: (InterestPoint) 
                 onClick = { navigateTo(interestPoint) },
                 role = Role.Button
             )
-            .padding(8.dp)
+            .padding(Size.medium)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(80.dp)
-                .padding(horizontal = 8.dp),
+                .height(Size.heightRowInMain)
+                .padding(horizontal = Size.medium),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {

@@ -10,7 +10,6 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -25,7 +24,7 @@ import com.google.android.gms.wearable.Wearable
 import dagger.hilt.android.AndroidEntryPoint
 import fr.wonderfulappstudio.notifymehere.model.InterestPoint
 import fr.wonderfulappstudio.notifymehere.ui.details.InterestPointDetailsScreen
-import fr.wonderfulappstudio.notifymehere.ui.main.NotifyMeHereMainScreen
+import fr.wonderfulappstudio.notifymehere.ui.main.MainScreen
 import fr.wonderfulappstudio.notifymehere.ui.details.InterestPointDetailsViewModel
 import fr.wonderfulappstudio.notifymehere.ui.map.MapActivity
 import fr.wonderfulappstudio.notifymehere.ui.map.startMapActivityForResult
@@ -64,7 +63,7 @@ class MainActivity : ComponentActivity() {
             NotifyMeHereTheme {
                 NavHost(navController = navController, startDestination = Main.route) {
                     composable(Main.route) {
-                        NotifyMeHereMainScreen(
+                        MainScreen(
                             onSendToWatch = {
                                 sendInterestPoints(it)
                             },
@@ -72,7 +71,7 @@ class MainActivity : ComponentActivity() {
                                 val route = if (it == null) {
                                     Details.route
                                 } else {
-                                    "${Details.route}?detailsId=${it}"
+                                    Details.routeWithDetailsId(it)
                                 }
                                 navController.navigate(route)
                             }, startWearableActivity = {
@@ -80,14 +79,15 @@ class MainActivity : ComponentActivity() {
                             })
                     }
                     composable(
-                        Details.route + "?detailsId={detailsId}",
-                        arguments = listOf(navArgument("detailsId") {
+                        Details.route + "?${Details.detailsIdKey}={${Details.detailsIdKey}}",
+                        arguments = listOf(navArgument(Details.detailsIdKey) {
                             defaultValue = -1
                             type = NavType.IntType
                         })
                     ) { backStackEntry ->
+                        detailsViewModel.initInterestPoint(backStackEntry.arguments?.getInt(Details.detailsIdKey))
                         // Use hiltNavGraphViewModels to get a ViewModel scoped to the nav graph
-                        val detailsViewModel: InterestPointDetailsViewModel = hiltViewModel(backStackEntry)
+                        //val detailsViewModel: InterestPointDetailsViewModel = hiltViewModel(backStackEntry)
                         // Now you can use detailsViewModel which has access to SavedStateHandle
                         InterestPointDetailsScreen(
                             viewModel = detailsViewModel,
