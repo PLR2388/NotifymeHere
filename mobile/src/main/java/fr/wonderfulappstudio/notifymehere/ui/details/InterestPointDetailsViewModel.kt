@@ -3,6 +3,7 @@ package fr.wonderfulappstudio.notifymehere.ui.details
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,10 +15,13 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class InterestPointDetailsViewModel @Inject constructor(private val interestPointRepository: InterestPointRepository) :
+class InterestPointDetailsViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+    private val interestPointRepository: InterestPointRepository
+) :
     ViewModel() {
 
-    private var detailsId: Int? = null
+    private var detailsId: Int? = savedStateHandle.get<Int>("detailsId")
 
     var state: InterestPointDetailsState by mutableStateOf(InterestPointDetailsState.Add)
 
@@ -34,6 +38,14 @@ class InterestPointDetailsViewModel @Inject constructor(private val interestPoin
 
     var showSuccess: Boolean by mutableStateOf(false)
         private set
+
+    init {
+        val position = savedStateHandle.get<Pair<Double, Double>>("position")
+        setDetailsId(detailsId)
+        if (position != null) {
+            uiState = uiState.copy(gpsPosition = position)
+        }
+    }
 
     fun setDetailsId(detailsId: Int?) {
         this.detailsId = detailsId

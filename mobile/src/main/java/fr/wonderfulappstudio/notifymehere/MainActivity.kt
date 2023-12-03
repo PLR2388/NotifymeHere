@@ -10,6 +10,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -85,11 +86,9 @@ class MainActivity : ComponentActivity() {
                             type = NavType.IntType
                         })
                     ) { backStackEntry ->
-                        val detailsIds = backStackEntry.arguments?.getInt("detailsId")
-                        backStackEntry.savedStateHandle.get<Pair<Double, Double>>("position")?.let {
-                            detailsViewModel.setGpsPosition(it)
-                        }
-                        detailsViewModel.setDetailsId(detailsIds)
+                        // Use hiltNavGraphViewModels to get a ViewModel scoped to the nav graph
+                        val detailsViewModel: InterestPointDetailsViewModel = hiltViewModel(backStackEntry)
+                        // Now you can use detailsViewModel which has access to SavedStateHandle
                         InterestPointDetailsScreen(
                             viewModel = detailsViewModel,
                             onNavigateBack = {

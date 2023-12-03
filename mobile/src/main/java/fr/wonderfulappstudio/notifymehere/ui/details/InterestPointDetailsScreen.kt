@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
@@ -254,9 +255,10 @@ fun InterestPointDetailsScreen(
                     if (viewModel.state != InterestPointDetailsState.Read) {
                         Button(
                             onClick = { viewModel.saveInterestPoint(onDismiss = onNavigateBack) },
+                            shape= RoundedCornerShape(8.dp),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 8.dp)
+                                .padding(horizontal = 16.dp)
                         ) {
                             Text(if (viewModel.state == InterestPointDetailsState.Add) "Add" else "Modify")
                         }
@@ -266,9 +268,10 @@ fun InterestPointDetailsScreen(
                     if (viewModel.state != InterestPointDetailsState.Add) {
                         Button(
                             onClick = { viewModel.delete(onNavigateBack) },
+                            shape= RoundedCornerShape(8.dp),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 8.dp),
+                                .padding(horizontal = 16.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
                         ) {
                             Text("delete")
