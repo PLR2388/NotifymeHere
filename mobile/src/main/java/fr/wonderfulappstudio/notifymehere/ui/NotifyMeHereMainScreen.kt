@@ -14,12 +14,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -28,11 +27,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import fr.wonderfulappstudio.notifymehere.R
+import fr.wonderfulappstudio.notifymehere.extension.showToast
 import fr.wonderfulappstudio.notifymehere.model.InterestPoint
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,14 +48,35 @@ fun NotifyMeHereMainScreen(
     startWearableActivity: () -> Unit
 ) {
     val interestPoints by viewModel.interestPoints.collectAsState(initial = emptyList())
+    val context = LocalContext.current
 
     Scaffold(topBar = {
         TopAppBar(title = { Text("Notify me here!") }, actions = {
-            IconButton(onClick = { startWearableActivity() }) {
-                Image(imageVector = Icons.Filled.PlayArrow, contentDescription = null)
+            IconButton(onClick = {
+                context.showToast("Starting Notify me here! on your wear...")
+                startWearableActivity()
+            }) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_watch),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(
+                        MaterialTheme.colorScheme.onBackground
+                    )
+                )
             }
-            IconButton(onClick = { onSendToWatch(interestPoints) }) {
-                Image(imageVector = Icons.AutoMirrored.Filled.Send, contentDescription = null)
+            if (interestPoints.isNotEmpty()) {
+                IconButton(onClick = {
+                    context.showToast("Sending interest points to your wear...")
+                    onSendToWatch(interestPoints)
+                }) {
+                    Image(
+                        imageVector = Icons.AutoMirrored.Filled.Send,
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(
+                            MaterialTheme.colorScheme.onBackground
+                        )
+                    )
+                }
             }
         })
     }, floatingActionButton = {

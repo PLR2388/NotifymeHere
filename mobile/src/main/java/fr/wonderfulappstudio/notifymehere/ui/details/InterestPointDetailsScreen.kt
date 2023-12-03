@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DatePickerState
@@ -43,6 +44,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -124,11 +126,15 @@ fun InterestPointDetailsScreen(
     }
 
     Scaffold(topBar = {
-        TopAppBar(title = { Text(when (viewModel.state) {
-            InterestPointDetailsState.Add -> "Add a new interest point"
-            InterestPointDetailsState.Modify -> "Modifiy ${viewModel.uiState.name}"
-            InterestPointDetailsState.Read -> viewModel.uiState.name
-        } )}, navigationIcon = {
+        TopAppBar(title = {
+            Text(
+                when (viewModel.state) {
+                    InterestPointDetailsState.Add -> "Add a new interest point"
+                    InterestPointDetailsState.Modify -> "Modifiy ${viewModel.uiState.name}"
+                    InterestPointDetailsState.Read -> viewModel.uiState.name
+                }
+            )
+        }, navigationIcon = {
             IconButton(onClick = onNavigateBack) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -248,7 +254,9 @@ fun InterestPointDetailsScreen(
                     if (viewModel.state != InterestPointDetailsState.Read) {
                         Button(
                             onClick = { viewModel.saveInterestPoint(onDismiss = onNavigateBack) },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp)
                         ) {
                             Text(if (viewModel.state == InterestPointDetailsState.Add) "Add" else "Modify")
                         }
@@ -258,7 +266,10 @@ fun InterestPointDetailsScreen(
                     if (viewModel.state != InterestPointDetailsState.Add) {
                         Button(
                             onClick = { viewModel.delete(onNavigateBack) },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
                         ) {
                             Text("delete")
                         }
