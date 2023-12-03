@@ -22,4 +22,6 @@
     <string name="toast_send_interest_points">Envoi des points d\'intérêts sur votre montre…</string>
     <string name="text_empty_interest_points">Vous n\'avez pas de points d\'intérêt ! Appuie sur + pour en ajouter un !</string>
     <string name="title_map">Choisissez une position</string>
+    <string name="title_error">Erreur</string>
+    <string name="error_location_permission">Vous n\'avez pas donné les permissions de géolocalisation !</string>
 </resources>

@@ -86,9 +86,6 @@ class MainActivity : ComponentActivity() {
                         })
                     ) { backStackEntry ->
                         detailsViewModel.initInterestPoint(backStackEntry.arguments?.getInt(Details.detailsIdKey))
-                        // Use hiltNavGraphViewModels to get a ViewModel scoped to the nav graph
-                        //val detailsViewModel: InterestPointDetailsViewModel = hiltViewModel(backStackEntry)
-                        // Now you can use detailsViewModel which has access to SavedStateHandle
                         InterestPointDetailsScreen(
                             viewModel = detailsViewModel,
                             onNavigateBack = {

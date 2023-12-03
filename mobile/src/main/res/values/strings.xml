@@ -22,4 +22,6 @@
     <string name="toast_send_interest_points">Sending interest points to your wear…</string>
     <string name="text_empty_interest_points">You don\'t have any interest point! Click on the + icon to add one!</string>
     <string name="title_map">Pick a location</string>
+    <string name="title_error">Error</string>
+    <string name="error_location_permission">You didn\'t give location permission!</string>
 </resources>

@@ -87,8 +87,7 @@ fun InterestPointDetailsScreen(
             }
 
             if (!permissionsGranted) {
-                //Logic when the permissions were not granted by the user
-                // Display alert that explain what happen
+                viewModel.displayNoPermissionForLocationAlert()
             }
         })
 

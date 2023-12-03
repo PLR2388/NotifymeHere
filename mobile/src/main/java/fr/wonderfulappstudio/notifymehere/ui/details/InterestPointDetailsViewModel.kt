@@ -39,6 +39,18 @@ class InterestPointDetailsViewModel @Inject constructor(
     var showSuccess: Boolean by mutableStateOf(false)
         private set
 
+    private fun buildInterestPoint(): InterestPoint {
+        val id = if (detailsId == null || detailsId == -1) null else detailsId
+        return InterestPoint(
+            id,
+            uiState.name,
+            uiState.description,
+            uiState.gpsPosition,
+            uiState.startDate,
+            uiState.endDate
+        )
+    }
+
     fun initInterestPoint(detailsId: Int?) {
         this.detailsId = detailsId
         if (detailsId == null || detailsId == -1) {
@@ -122,16 +134,9 @@ class InterestPointDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun buildInterestPoint(): InterestPoint {
-        val id = if (detailsId == null || detailsId == -1) null else detailsId
-        return InterestPoint(
-            id,
-            uiState.name,
-            uiState.description,
-            uiState.gpsPosition,
-            uiState.startDate,
-            uiState.endDate
-        )
+    fun displayNoPermissionForLocationAlert() {
+        alertType = AlertType.NoLocationPermission
+        showAlert = true
     }
 
     fun setName(value: String) {
