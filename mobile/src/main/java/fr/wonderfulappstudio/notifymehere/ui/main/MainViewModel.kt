@@ -1,4 +1,4 @@
-package fr.wonderfulappstudio.notifymehere.ui
+package fr.wonderfulappstudio.notifymehere.ui.main
 
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.wearable.CapabilityClient

@@ -25,7 +25,7 @@ import com.google.android.gms.wearable.Wearable
 import dagger.hilt.android.AndroidEntryPoint
 import fr.wonderfulappstudio.notifymehere.model.InterestPoint
 import fr.wonderfulappstudio.notifymehere.ui.details.InterestPointDetailsScreen
-import fr.wonderfulappstudio.notifymehere.ui.NotifyMeHereMainScreen
+import fr.wonderfulappstudio.notifymehere.ui.main.NotifyMeHereMainScreen
 import fr.wonderfulappstudio.notifymehere.ui.details.InterestPointDetailsViewModel
 import fr.wonderfulappstudio.notifymehere.ui.map.MapActivity
 import fr.wonderfulappstudio.notifymehere.ui.map.startMapActivityForResult

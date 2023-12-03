@@ -16,6 +16,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.stringResource
+import fr.wonderfulappstudio.notifymehere.R
 import fr.wonderfulappstudio.notifymehere.extension.convertMillisToDate
 
 @Composable
@@ -81,14 +83,14 @@ fun DatePicker(
             }
 
             ) {
-                Text(text = "OK")
+                Text(text = stringResource(id = R.string.button_ok))
             }
         },
         dismissButton = {
             Button(onClick = {
                 onDismiss()
             }) {
-                Text(text = "Cancel")
+                Text(text = stringResource(R.string.button_cancel))
             }
         }
     ) {

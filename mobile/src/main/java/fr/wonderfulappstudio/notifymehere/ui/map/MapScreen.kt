@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -19,6 +20,7 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import fr.wonderfulappstudio.notifymehere.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,11 +31,16 @@ fun MapScreen(
     onValidatePicker: (Pair<Double, Double>) -> Unit
 ) {
     if (selectedPosition != null) {
-        viewModel.onMapLongClick(LatLng(selectedPosition.first.toDouble(), selectedPosition.second.toDouble()))
+        viewModel.onMapLongClick(
+            LatLng(
+                selectedPosition.first.toDouble(),
+                selectedPosition.second.toDouble()
+            )
+        )
     }
 
     Scaffold(topBar = {
-        TopAppBar(title = { Text("Pick your location") }, navigationIcon = {
+        TopAppBar(title = { Text(stringResource(R.string.title_map)) }, navigationIcon = {
             IconButton(onClick = onNavigateBack) {
                 Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
             }
@@ -56,8 +63,6 @@ fun MapScreen(
         ) {
             Marker(
                 state = MarkerState(position = viewModel.position),
-                title = "Singapore",
-                snippet = "Marker in Singapore"
             )
         }
     }

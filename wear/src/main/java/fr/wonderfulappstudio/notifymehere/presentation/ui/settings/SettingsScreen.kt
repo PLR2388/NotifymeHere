@@ -10,6 +10,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
@@ -28,13 +29,13 @@ fun SettingsScreen(
         ScalingLazyColumn {
 
             item {
-                Text("How close to a location should you be notified?")
+                Text(stringResource(R.string.question_accuracy))
             }
             item {
-                Text("Current accuracy")
+                Text(stringResource(R.string.label_accuracy))
             }
             item {
-                Text(text = "${notificationDistance ?: 500} m")
+                Text(text = stringResource(R.string.abbreviation_meter, notificationDistance ?: 500))
             }
             item {
                 InlineSlider(

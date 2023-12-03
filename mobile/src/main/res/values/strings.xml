@@ -1,3 +1,25 @@
 <resources>
     <string name="app_name">Notify me Here!</string>
+    <string name="validation_alert_title">Validation failed</string>
+    <string name="button_ok">Ok</string>
+    <string name="validation_message_name_empty">Name cannot be empty!</string>
+    <string name="validation_message_position_empty">Position should be set</string>
+    <string name="validation_message_start_date_after_end_date">Start date cannot be later than end date</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="message_interest_point_saved">Your interest point was saved</string>
+    <string name="title_details_add">Add a new interest point</string>
+    <string name="title_details_modify">Modifiy %1$s</string>
+    <string name="label_name">Name</string>
+    <string name="label_description">Description (optional)</string>
+    <string name="label_gps_position">GPS Position</string>
+    <string name="label_start_date">Start Date (optional)</string>
+    <string name="label_end_date">End Date (optional)</string>
+    <string name="button_delete">Delete</string>
+    <string name="button_add">Add</string>
+    <string name="button_modify">Modify</string>
+    <string name="title_main">Notify me here!</string>
+    <string name="toast_start_wear_app">Starting Notify me here! on your wear…</string>
+    <string name="toast_send_interest_points">Sending interest points to your wear…</string>
+    <string name="text_empty_interest_points">You don\'t have any interest point! Click on the + icon to add one!</string>
+    <string name="title_map">Pick a location</string>
 </resources>

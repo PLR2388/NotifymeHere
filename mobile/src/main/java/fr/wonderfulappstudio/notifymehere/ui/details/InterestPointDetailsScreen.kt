@@ -47,6 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -54,6 +55,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority.PRIORITY_LOW_POWER
+import fr.wonderfulappstudio.notifymehere.R
 import fr.wonderfulappstudio.notifymehere.ui.composable.CustomAlert
 import fr.wonderfulappstudio.notifymehere.ui.composable.DatePickerField
 import fr.wonderfulappstudio.notifymehere.ui.composable.LoadingScreen
@@ -110,7 +112,7 @@ fun InterestPointDetailsScreen(
     LaunchedEffect(key1 = viewModel.showSuccess) {
         scope.launch {
             snackbarHostState.showSnackbar(
-                message = "Your interest point was saved",
+                message = context.getString(R.string.message_interest_point_saved),
                 duration = SnackbarDuration.Long
             )
         }
@@ -130,8 +132,12 @@ fun InterestPointDetailsScreen(
         TopAppBar(title = {
             Text(
                 when (viewModel.state) {
-                    InterestPointDetailsState.Add -> "Add a new interest point"
-                    InterestPointDetailsState.Modify -> "Modifiy ${viewModel.uiState.name}"
+                    InterestPointDetailsState.Add -> stringResource(R.string.title_details_add)
+                    InterestPointDetailsState.Modify -> stringResource(
+                        R.string.title_details_modify,
+                        viewModel.uiState.name
+                    )
+
                     InterestPointDetailsState.Read -> viewModel.uiState.name
                 }
             )
@@ -177,7 +183,7 @@ fun InterestPointDetailsScreen(
                         value = viewModel.uiState.name,
                         onValueChange = viewModel::setName,
                         readOnly = viewModel.state == InterestPointDetailsState.Read,
-                        label = { Text("Name") })
+                        label = { Text(stringResource(R.string.label_name)) })
 
                 }
                 item {
@@ -185,7 +191,7 @@ fun InterestPointDetailsScreen(
                         value = viewModel.uiState.description ?: "",
                         onValueChange = viewModel::setDescription,
                         readOnly = viewModel.state == InterestPointDetailsState.Read,
-                        label = { Text("Description (optional)") })
+                        label = { Text(stringResource(R.string.label_description)) })
                 }
                 item {
                     Row(
@@ -201,7 +207,7 @@ fun InterestPointDetailsScreen(
                             ),
                             onValueChange = {},
                             readOnly = true,
-                            label = { Text("GPS Position") })
+                            label = { Text(stringResource(R.string.label_gps_position)) })
                         OutlinedIconButton(onClick = {
                             if (viewModel.state == InterestPointDetailsState.Read) return@OutlinedIconButton
                             if (viewModel.uiState.gpsPosition == Pair(0.0, 0.0)) {
@@ -239,14 +245,14 @@ fun InterestPointDetailsScreen(
                 }
                 item {
                     DatePickerField(
-                        "Start Date (optional)",
+                        stringResource(R.string.label_start_date),
                         readOnly = viewModel.state == InterestPointDetailsState.Read,
                         onDateSelected = viewModel::setStartDate
                     )
                 }
                 item {
                     DatePickerField(
-                        "End Date (optional)",
+                        stringResource(R.string.label_end_date),
                         readOnly = viewModel.state == InterestPointDetailsState.Read,
                         onDateSelected = viewModel::setEndDate
                     )
@@ -255,12 +261,16 @@ fun InterestPointDetailsScreen(
                     if (viewModel.state != InterestPointDetailsState.Read) {
                         Button(
                             onClick = { viewModel.saveInterestPoint(onDismiss = onNavigateBack) },
-                            shape= RoundedCornerShape(8.dp),
+                            shape = RoundedCornerShape(8.dp),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp)
                         ) {
-                            Text(if (viewModel.state == InterestPointDetailsState.Add) "Add" else "Modify")
+                            Text(
+                                if (viewModel.state == InterestPointDetailsState.Add) stringResource(
+                                    R.string.button_add
+                                ) else stringResource(R.string.button_modify)
+                            )
                         }
                     }
                 }
@@ -268,13 +278,13 @@ fun InterestPointDetailsScreen(
                     if (viewModel.state != InterestPointDetailsState.Add) {
                         Button(
                             onClick = { viewModel.delete(onNavigateBack) },
-                            shape= RoundedCornerShape(8.dp),
+                            shape = RoundedCornerShape(8.dp),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
                         ) {
-                            Text("delete")
+                            Text(stringResource(R.string.button_delete))
                         }
                     }
                 }

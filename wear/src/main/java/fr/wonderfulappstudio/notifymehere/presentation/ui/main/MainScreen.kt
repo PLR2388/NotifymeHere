@@ -8,6 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -32,7 +33,7 @@ fun MainScreen(
         ScalingLazyColumn {
             if (interestPoints.isEmpty()) {
                 item {
-                    Text("You haven't send any interest point!")
+                    Text(stringResource(R.string.text_no_interest_points))
                 }
             } else {
                 item {
@@ -60,7 +61,7 @@ fun MainScreen(
                 }
                 item {
                     Chip(label = {
-                        Text("Settings")
+                        Text(stringResource(R.string.button_settings))
                     }, onClick = onNavigateToSettings, icon = {
                         Image(
                             painterResource(id = R.drawable.ic_settings),

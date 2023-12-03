@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Notify me Here!</string>
+    <string name="label_description">Description</string>
+    <string name="label_position">Position</string>
+    <string name="label_start_date">Date de début</string>
+    <string name="label_end_date">Date de fin</string>
+    <string name="button_activate_notification">Activer les notifications</string>
+    <string name="button_delete_interest_point">Supprimer le point d\'intérêt</string>
+    <string name="text_empty_details">Une erreur est survenue</string>
+    <string name="text_no_interest_points">Vous n\'avez aucun points d\'intérêts. Envoyez-les depuis l\'application mobile !</string>
+    <string name="button_settings">Paramètres</string>
+    <string name="question_accuracy">À quel distance du point d\'intérêt voulez-vous être notifié ?</string>
+    <string name="label_accuracy">Distance</string>
+    <string name="abbreviation_meter">%1$s m</string>
+</resources>

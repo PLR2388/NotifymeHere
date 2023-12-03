@@ -1,4 +1,4 @@
-package fr.wonderfulappstudio.notifymehere.ui
+package fr.wonderfulappstudio.notifymehere.ui.main
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,9 +52,9 @@ fun NotifyMeHereMainScreen(
     val context = LocalContext.current
 
     Scaffold(topBar = {
-        TopAppBar(title = { Text("Notify me here!") }, actions = {
+        TopAppBar(title = { Text(stringResource(R.string.title_main)) }, actions = {
             IconButton(onClick = {
-                context.showToast("Starting Notify me here! on your wear...")
+                context.showToast(context.getString(R.string.toast_start_wear_app))
                 startWearableActivity()
             }) {
                 Image(
@@ -66,7 +67,7 @@ fun NotifyMeHereMainScreen(
             }
             if (interestPoints.isNotEmpty()) {
                 IconButton(onClick = {
-                    context.showToast("Sending interest points to your wear...")
+                    context.showToast(context.getString(R.string.toast_send_interest_points))
                     onSendToWatch(interestPoints)
                 }) {
                     Image(
@@ -93,7 +94,7 @@ fun NotifyMeHereMainScreen(
                 .padding(horizontal = 8.dp)
         ) {
             if (interestPoints.isEmpty()) {
-                item { Text(text = "You don't have any interest point! Click on the + icon to add one!") }
+                item { Text(text = stringResource(R.string.text_empty_interest_points)) }
             } else {
                 items(interestPoints) { interestPoint ->
                     InterestPointCard(interestPoint = interestPoint, navigateTo = {

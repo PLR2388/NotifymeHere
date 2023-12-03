@@ -4,6 +4,8 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import fr.wonderfulappstudio.notifymehere.R
 import fr.wonderfulappstudio.notifymehere.ui.details.AlertType
 
 @Composable
@@ -12,40 +14,42 @@ fun CustomAlert(alertType: AlertType, onDismiss: () -> Unit) {
         AlertType.NameIsEmpty ->
             AlertDialog(
                 onDismissRequest = onDismiss,
-                title = { Text(text = "Validation failed") },
+                title = { Text(text = stringResource(R.string.validation_alert_title)) },
                 text = {
                     Text(
-                        text = "Name cannot be empty!"
+                        text = stringResource(R.string.validation_message_name_empty)
                     )
                 }, confirmButton = {
                     Button(onClick = onDismiss) {
-                        Text("Ok")
+                        Text(stringResource(R.string.button_ok))
                     }
                 })
+
         AlertType.PositionIsEmpty ->
             AlertDialog(
                 onDismissRequest = onDismiss,
-                title = { Text(text = "Validation failed") },
+                title = { Text(text = stringResource(R.string.validation_alert_title)) },
                 text = {
                     Text(
-                        text = "Position should be set"
+                        text = stringResource(R.string.validation_message_position_empty)
                     )
                 }, confirmButton = {
                     Button(onClick = onDismiss) {
-                        Text("Ok")
+                        Text(stringResource(R.string.button_ok))
                     }
                 })
+
         AlertType.StartDateGreaterEndDate ->
             AlertDialog(
                 onDismissRequest = onDismiss,
-                title = { Text(text = "Validation failed") },
+                title = { Text(text = stringResource(R.string.validation_alert_title)) },
                 text = {
                     Text(
-                        text = "Start date cannot be later than end date"
+                        text = stringResource(R.string.validation_message_start_date_after_end_date)
                     )
                 }, confirmButton = {
                     Button(onClick = onDismiss) {
-                        Text("Ok")
+                        Text(stringResource(R.string.button_ok))
                     }
                 })
     }

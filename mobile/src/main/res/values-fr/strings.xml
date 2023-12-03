@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Notify me Here!</string>
+    <string name="validation_alert_title">Problème de validation</string>
+    <string name="button_ok">Ok</string>
+    <string name="validation_message_name_empty">Le nom ne doit pas être vide !</string>
+    <string name="validation_message_position_empty">Vous devez ajouter une position</string>
+    <string name="validation_message_start_date_after_end_date">La date de début ne doit pas être postérieur à la date de fin</string>
+    <string name="button_cancel">Annuler</string>
+    <string name="message_interest_point_saved">Votre point d\'intérêt a été sauvegardé</string>
+    <string name="title_details_add">Ajouter un nouveau point d\'intérêt</string>
+    <string name="title_details_modify">Modifier %1$s</string>
+    <string name="label_name">Nom</string>
+    <string name="label_description">Description (optionnel)</string>
+    <string name="label_gps_position">Position GPS</string>
+    <string name="label_start_date">Date de début (optionnel)</string>
+    <string name="label_end_date">Date de fin (optionnel)</string>
+    <string name="button_delete">Supprimer</string>
+    <string name="button_add">Ajouter</string>
+    <string name="button_modify">Modifier</string>
+    <string name="title_main">Notify me here!</string>
+    <string name="toast_start_wear_app">Démarrage de Notify me here! sur votre montre…</string>
+    <string name="toast_send_interest_points">Envoi des points d\'intérêts sur votre montre…</string>
+    <string name="text_empty_interest_points">Vous n\'avez pas de points d\'intérêt ! Appuie sur + pour en ajouter un !</string>
+    <string name="title_map">Choisissez une position</string>
+</resources>

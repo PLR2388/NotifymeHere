@@ -8,6 +8,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,6 +21,7 @@ import androidx.wear.compose.material.Chip
 import androidx.wear.compose.material.ChipDefaults
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.TimeText
+import fr.wonderfulappstudio.notifymehere.R
 import java.util.Date
 
 @Composable
@@ -38,7 +40,7 @@ fun DetailsScreen(viewModel: DetailViewModel = hiltViewModel(), onBack: () -> Un
                 if (it.description != null) {
                     item {
                         Text(
-                            "Description",
+                            stringResource(R.string.label_description),
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center
                         )
@@ -57,7 +59,7 @@ fun DetailsScreen(viewModel: DetailViewModel = hiltViewModel(), onBack: () -> Un
                     }
                 }
                 item {
-                    Text("Position", fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.label_position), fontWeight = FontWeight.Bold)
                 }
                 item {
                     Text("${it.position.latitude}; ${it.position.longitude}")
@@ -65,7 +67,7 @@ fun DetailsScreen(viewModel: DetailViewModel = hiltViewModel(), onBack: () -> Un
 
                 if (it.startDate != null) {
                     item {
-                        Text("Start Date", fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.label_start_date), fontWeight = FontWeight.Bold)
                     }
                     item {
                         Text(Date(it.startDate).toString())
@@ -74,7 +76,7 @@ fun DetailsScreen(viewModel: DetailViewModel = hiltViewModel(), onBack: () -> Un
 
                 if (it.endDate != null) {
                     item {
-                        Text("End Date", fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.label_end_date), fontWeight = FontWeight.Bold)
                     }
                     item {
                         Text(Date(it.endDate).toString())
@@ -84,20 +86,20 @@ fun DetailsScreen(viewModel: DetailViewModel = hiltViewModel(), onBack: () -> Un
                 item {
                     if (it.alreadyNotify) {
                         Chip(
-                            label = { Text("Activate notification again") },
+                            label = { Text(stringResource(R.string.button_activate_notification)) },
                             onClick = viewModel::reactivateNotification
                         )
                     }
                 }
 
                 item {
-                    Chip(label = { Text("Delete interest point") }, onClick = {
+                    Chip(label = { Text(stringResource(R.string.button_delete_interest_point)) }, onClick = {
                         viewModel.deleteInterestPoint()
                         onBack()
                     }, colors = ChipDefaults.chipColors(backgroundColor = Color.Red))
                 }
             } ?: item {
-                Text("An error occurs")
+                Text(stringResource(R.string.text_empty_details))
             }
 
         }
