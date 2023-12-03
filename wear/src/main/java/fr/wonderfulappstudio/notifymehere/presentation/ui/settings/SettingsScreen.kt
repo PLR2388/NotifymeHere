@@ -10,6 +10,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.material.InlineSlider
@@ -44,7 +45,7 @@ fun SettingsScreen(
                         Image(
                             painter = painterResource(id = R.drawable.ic_minus),
                             contentDescription = null,
-                            modifier = Modifier.padding()
+                            modifier = Modifier.padding(vertical= 8.dp)
                         )
                     },
                     increaseIcon = {

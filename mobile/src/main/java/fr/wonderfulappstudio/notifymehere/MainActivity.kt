@@ -16,14 +16,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import fr.wonderfulappstudio.notifymehere.theme.NotifyMeHereTheme
 import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.PutDataRequest
 import com.google.android.gms.wearable.Wearable
 import dagger.hilt.android.AndroidEntryPoint
 import fr.wonderfulappstudio.notifymehere.model.InterestPoint
-import fr.wonderfulappstudio.notifymehere.theme.NotifyMeHereTheme
-import fr.wonderfulappstudio.notifymehere.ui.MainViewModel
 import fr.wonderfulappstudio.notifymehere.ui.details.InterestPointDetailsScreen
 import fr.wonderfulappstudio.notifymehere.ui.NotifyMeHereMainScreen
 import fr.wonderfulappstudio.notifymehere.ui.details.InterestPointDetailsViewModel
@@ -56,6 +55,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        actionBar?.hide()
         setContent {
             val navController = rememberNavController()
             val context = LocalContext.current

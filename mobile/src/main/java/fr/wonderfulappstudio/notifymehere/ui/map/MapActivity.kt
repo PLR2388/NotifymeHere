@@ -1,17 +1,13 @@
 package fr.wonderfulappstudio.notifymehere.ui.map
 
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.PersistableBundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContract
-import androidx.activity.result.contract.ActivityResultContracts
+import fr.wonderfulappstudio.notifymehere.theme.NotifyMeHereTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -23,21 +19,24 @@ class MapActivity : ComponentActivity() {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        actionBar?.hide()
         val latitude = intent.getFloatExtra(LATITUDE_EXTRA_KEY, 0.0f)
         val longitude = intent.getFloatExtra(LONGITUDE_EXTRA_KEY, 0.0f)
         setContent {
-            MapScreen(
-                selectedPosition = Pair(latitude, longitude),
-                onNavigateBack = { finish() },
-                onValidatePicker = {
-                    val data = Intent().apply {
-                        putExtra(LATITUDE_EXTRA_KEY, it.first)
-                        putExtra(LONGITUDE_EXTRA_KEY, it.second)
+            NotifyMeHereTheme {
+                MapScreen(
+                    selectedPosition = Pair(latitude, longitude),
+                    onNavigateBack = { finish() },
+                    onValidatePicker = {
+                        val data = Intent().apply {
+                            putExtra(LATITUDE_EXTRA_KEY, it.first)
+                            putExtra(LONGITUDE_EXTRA_KEY, it.second)
+                        }
+                        setResult(RESULT_OK, data)
+                        finish()
                     }
-                    setResult(Activity.RESULT_OK, data)
-                    finish()
-                }
-            )
+                )
+            }
         }
     }
 }

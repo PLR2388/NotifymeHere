@@ -1,21 +1,15 @@
 package fr.wonderfulappstudio.notifymehere.presentation.theme
 
 import androidx.compose.ui.graphics.Color
-import androidx.wear.compose.material.Colors
 
-val Purple200 = Color(0xFFBB86FC)
-val Purple500 = Color(0xFF6200EE)
-val Purple700 = Color(0xFF3700B3)
-val Teal200 = Color(0xFF03DAC5)
-val Red400 = Color(0xFFCF6679)
-
-internal val wearColorPalette: Colors = Colors(
-    primary = Purple200,
-    primaryVariant = Purple700,
-    secondary = Teal200,
-    secondaryVariant = Teal200,
-    error = Red400,
-    onPrimary = Color.Black,
-    onSecondary = Color.Black,
-    onError = Color.Black
-)
+val md_theme_dark_primary = Color(0xFF4CD9DF)
+val md_theme_dark_onPrimary = Color(0xFF003739)
+val md_theme_dark_secondary = Color(0xFFB0CCCC)
+val md_theme_dark_onSecondary = Color(0xFF1B3435)
+val md_theme_dark_error = Color(0xFFFFB4AB)
+val md_theme_dark_onError = Color(0xFF690005)
+val md_theme_dark_background = Color.Black
+val md_theme_dark_onBackground = Color(0xFFE0E3E2)
+val md_theme_dark_surface = Color(0xFF191C1C)
+val md_theme_dark_onSurface = Color(0xFFE0E3E2)
+val md_theme_dark_onSurfaceVariant = Color(0xFFBEC8C8)
