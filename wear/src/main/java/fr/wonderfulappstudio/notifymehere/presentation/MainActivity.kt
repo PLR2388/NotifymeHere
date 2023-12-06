@@ -20,11 +20,15 @@ import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.google.android.gms.wearable.Wearable
 import dagger.hilt.android.AndroidEntryPoint
+import fr.wonderfulappstudio.notifymehere.presentation.manager.MultiplePermissionsResultCallback
+import fr.wonderfulappstudio.notifymehere.presentation.manager.PermissionManager
+import fr.wonderfulappstudio.notifymehere.presentation.manager.PermissionResultCallback
 import fr.wonderfulappstudio.notifymehere.presentation.service.LocationService
 import fr.wonderfulappstudio.notifymehere.presentation.theme.NotifyMeHereTheme
 import fr.wonderfulappstudio.notifymehere.presentation.ui.Details
 import fr.wonderfulappstudio.notifymehere.presentation.ui.Main
 import fr.wonderfulappstudio.notifymehere.presentation.ui.Settings
+import fr.wonderfulappstudio.notifymehere.presentation.ui.composable.CustomAlert
 import fr.wonderfulappstudio.notifymehere.presentation.ui.details.DetailsScreen
 import fr.wonderfulappstudio.notifymehere.presentation.ui.main.MainScreen
 import fr.wonderfulappstudio.notifymehere.presentation.ui.main.MainViewModel
@@ -36,108 +40,68 @@ class MainActivity : ComponentActivity() {
     private val dataClient by lazy { Wearable.getDataClient(this) }
     private val mainViewModel by viewModels<MainViewModel>()
 
-    private val pushNotificationPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { granted ->
-        mainViewModel.updateGrantNotificationPermission(granted)
+    private lateinit var permissionManager: PermissionManager
+
+    private fun startLocationService() {
+        val serviceIntent = Intent(this, LocationService::class.java)
+        ContextCompat.startForegroundService(this, serviceIntent)
     }
-
-    private val locationPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            var allPermissionsGranted = true
-            permissions.entries.forEach {
-                val isGranted = it.value
-                allPermissionsGranted = allPermissionsGranted && isGranted
-            }
-
-            if (allPermissionsGranted) {
-                // All permissions are granted. You can start the location service.
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    requestBackgroundLocationPermission()
-                } else {
-                    startLocationService()
-                }
-            } else {
-                // Permissions denied. You can show a message to the user explaining why you need the permission.
-            }
-        }
-
-    private val backgroundLocationPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-            if (isGranted) {
-                // Permission is granted. You can perform the operation that requires the permission.
-                startLocationService()
-            } else {
-                // Permission is denied. You can show a message to the user explaining why you need the permission.
-            }
-        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val isPermissionGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.POST_NOTIFICATIONS
-            ) == PackageManager.PERMISSION_GRANTED
+
+        permissionManager = PermissionManager(this)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissionManager.requestNotificationPermission(object: PermissionResultCallback {
+                override fun onPermissionResult(granted: Boolean) {
+                    if (granted) {
+                        requestLocationPermissions()
+                    } else {
+                        // Display alert
+                    }
+                }
+            })
         } else {
-            true
-        }
-        mainViewModel.updateGrantNotificationPermission(isPermissionGranted)
-        if (!isPermissionGranted) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                pushNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-            }
+            requestLocationPermissions()
         }
 
         val interestPointId = intent.getIntExtra(locationIdKey, -1)
 
         val detailsId = if (interestPointId == -1) null else interestPointId
 
-        requestPermissions()
         setContent {
             WearApp(mainViewModel, detailsId)
         }
     }
 
-    private fun requestPermissions() {
-        when (PackageManager.PERMISSION_GRANTED) {
-            ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) -> {
-                // You can now request the background location permission
-                requestBackgroundLocationPermission()
+    private fun requestLocationPermissions() {
+        permissionManager.requestLocationPermissions(object : MultiplePermissionsResultCallback {
+            override fun onPermissionsResult(grantedPermissions: Map<String, Boolean>) {
+                val allPermissionsGranted = grantedPermissions.entries.all { it.value }
+
+                if (allPermissionsGranted) {
+                    // All permissions are granted. You can start the location service.
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        permissionManager.requestBackgroundLocationPermissions(object :
+                            PermissionResultCallback {
+                            override fun onPermissionResult(granted: Boolean) {
+                                if (granted) {
+                                    // Permission is granted. You can perform the operation that requires the permission.
+                                    startLocationService()
+                                } else {
+                                    // Permission is denied. You can show a message to the user explaining why you need the permission.
+                                }
+                            }
+                        })
+                    } else {
+                        startLocationService()
+                    }
+                } else {
+                    // Permissions denied. You can show a message to the user explaining why you need the permission.
+                }
             }
-
-            else -> {
-                // Request fine location first
-                locationPermissionLauncher.launch(
-                    arrayOf(
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    )
-                )
-            }
-        }
-    }
-
-    private fun requestBackgroundLocationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            // Starting from Android 11 (API level 30), you can request the background location permission.
-            backgroundLocationPermissionLauncher.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-        } else {
-            /*Toast.makeText(
-                this,
-                "Background location access is not available on this device.",
-                Toast.LENGTH_SHORT
-            ).show()*/
-        }
-    }
-
-
-    private fun startLocationService() {
-        val serviceIntent = Intent(this, LocationService::class.java)
-        ContextCompat.startForegroundService(this, serviceIntent)
+        })
     }
 
 
@@ -164,6 +128,12 @@ fun WearApp(viewModel: MainViewModel, detailsId: Int?) {
     LaunchedEffect(Unit) {
         if (detailsId != null) {
             navController.navigate(Details.buildRouteWithArguments(detailsId, true))
+        }
+    }
+
+    if (viewModel.showAlert) {
+        viewModel.alertType?.let {
+            CustomAlert(alertType = it, onDismiss = viewModel::hideAlert)
         }
     }
 

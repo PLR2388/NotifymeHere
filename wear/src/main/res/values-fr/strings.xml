@@ -14,4 +14,5 @@
     <string name="label_accuracy">Distance</string>
     <string name="abbreviation_meter">%1$s m</string>
     <string name="text_in_progress">En cours…</string>
+    <string name="title_alert">Warning</string>
 </resources>

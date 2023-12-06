@@ -2,6 +2,9 @@ package fr.wonderfulappstudio.notifymehere.presentation.ui.main
 
 
 import android.app.Application
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.wearable.DataClient
@@ -25,10 +28,15 @@ class MainViewModel @Inject constructor(
     private val interestPointRepository: InterestPointRepository
 ) :
     AndroidViewModel(application),
-    DataClient.OnDataChangedListener{
+    DataClient.OnDataChangedListener {
+
     val interestPoints: Flow<List<InterestPoint>> = interestPointRepository.interestPoints
 
-    private var isNotificationGranted: Boolean = false
+    var alertType: AlertType? by mutableStateOf(null)
+        private set
+
+    var showAlert: Boolean by mutableStateOf(false)
+        private set
 
     override fun onDataChanged(dataEvents: DataEventBuffer) {
         dataEvents.forEach { event ->
@@ -44,7 +52,12 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun updateGrantNotificationPermission(granted: Boolean) {
-        isNotificationGranted = granted
+    fun displayNotificationPermissionNotGranted() {
+
+    }
+
+    fun hideAlert() {
+        showAlert = false
+        alertType = null
     }
 }
