@@ -53,8 +53,20 @@ class MainViewModel @Inject constructor(
     }
 
     fun displayNotificationPermissionNotGranted() {
-
+        alertType = AlertType.NotificationPermissionNotGranted
+        showAlert = true
     }
+
+    fun displayLocationPermissionNotGranted() {
+        alertType = AlertType.LocationPermissionsNotGranted
+        showAlert = true
+    }
+
+    fun displayBackgroundLocationPermissionNotGranted() {
+        alertType = AlertType.BackgroundLocationPermissionNotGranted
+        showAlert = true
+    }
+
 
     fun hideAlert() {
         showAlert = false

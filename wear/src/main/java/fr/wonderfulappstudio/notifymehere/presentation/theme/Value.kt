@@ -4,6 +4,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 object Size {
+    val small: Dp = 4.dp
     val medium: Dp = 8.dp
 }
 

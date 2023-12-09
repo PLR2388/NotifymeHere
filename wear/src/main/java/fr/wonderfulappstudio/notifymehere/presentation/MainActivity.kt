@@ -7,11 +7,9 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
@@ -33,6 +31,7 @@ import fr.wonderfulappstudio.notifymehere.presentation.ui.details.DetailsScreen
 import fr.wonderfulappstudio.notifymehere.presentation.ui.main.MainScreen
 import fr.wonderfulappstudio.notifymehere.presentation.ui.main.MainViewModel
 import fr.wonderfulappstudio.notifymehere.presentation.ui.settings.SettingsScreen
+import fr.wonderfulappstudio.notifymehere.presentation.utils.isLocationServiceRunning
 
 
 @AndroidEntryPoint
@@ -53,12 +52,12 @@ class MainActivity : ComponentActivity() {
         permissionManager = PermissionManager(this)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            permissionManager.requestNotificationPermission(object: PermissionResultCallback {
+            permissionManager.requestNotificationPermission(object : PermissionResultCallback {
                 override fun onPermissionResult(granted: Boolean) {
                     if (granted) {
                         requestLocationPermissions()
                     } else {
-                        // Display alert
+                        mainViewModel.displayNotificationPermissionNotGranted()
                     }
                 }
             })
@@ -66,12 +65,37 @@ class MainActivity : ComponentActivity() {
             requestLocationPermissions()
         }
 
+        activateLocationServiceIfNecessary()
+
         val interestPointId = intent.getIntExtra(locationIdKey, -1)
 
         val detailsId = if (interestPointId == -1) null else interestPointId
 
         setContent {
             WearApp(mainViewModel, detailsId)
+        }
+    }
+
+    private fun activateLocationServiceIfNecessary() {
+        if (!isLocationServiceRunning() &&
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            startLocationService()
         }
     }
 
@@ -90,7 +114,7 @@ class MainActivity : ComponentActivity() {
                                     // Permission is granted. You can perform the operation that requires the permission.
                                     startLocationService()
                                 } else {
-                                    // Permission is denied. You can show a message to the user explaining why you need the permission.
+                                    mainViewModel.displayBackgroundLocationPermissionNotGranted()
                                 }
                             }
                         })
@@ -99,15 +123,16 @@ class MainActivity : ComponentActivity() {
                     }
                 } else {
                     // Permissions denied. You can show a message to the user explaining why you need the permission.
+                    mainViewModel.displayLocationPermissionNotGranted()
                 }
             }
         })
     }
 
-
     override fun onResume() {
         super.onResume()
         dataClient.addListener(mainViewModel)
+        activateLocationServiceIfNecessary()
     }
 
     override fun onPause() {
@@ -131,11 +156,11 @@ fun WearApp(viewModel: MainViewModel, detailsId: Int?) {
         }
     }
 
-    if (viewModel.showAlert) {
-        viewModel.alertType?.let {
-            CustomAlert(alertType = it, onDismiss = viewModel::hideAlert)
-        }
-    }
+    CustomAlert(
+        viewModel.showAlert,
+        alertType = viewModel.alertType,
+        onDismiss = viewModel::hideAlert
+    )
 
     NotifyMeHereTheme {
         SwipeDismissableNavHost(

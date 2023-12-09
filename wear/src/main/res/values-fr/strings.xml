@@ -14,5 +14,8 @@
     <string name="label_accuracy">Distance</string>
     <string name="abbreviation_meter">%1$s m</string>
     <string name="text_in_progress">En cours…</string>
-    <string name="title_alert">Warning</string>
+    <string name="title_alert">Attention</string>
+    <string name="notification_permission_message_alert">Vous n\'avez pas donné les permissions pour les notifications donc l\'app ne fonctionnera pas correctement</string>
+    <string name="location_permission_message_alert">Vous n\'avez pas donné les permissions pour la localisation donc l\'app ne fonctionnera pas correctement</string>
+    <string name="background_location_permission_message_alert">Vous n\'avez pas donné les permissions pour la localisation d\'arrière-plan donc l\'app ne fonctionnera pas correctement</string>
 </resources>

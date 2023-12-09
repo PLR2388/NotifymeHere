@@ -14,4 +14,7 @@
     <string name="abbreviation_meter">%1$s m</string>
     <string name="text_in_progress">Running…</string>
     <string name="title_alert">Warning</string>
+    <string name="notification_permission_message_alert">You didn\'t give Notification permission so the app won\'t work correctly</string>
+    <string name="location_permission_message_alert">You didn\'t give location permissions so the app won\'t work correctly</string>
+    <string name="background_location_permission_message_alert">You didn\'t give background location permission so the app won\'t work correctly</string>
 </resources>
