@@ -24,4 +24,6 @@
     <string name="title_map">Choisissez une position</string>
     <string name="title_error">Erreur</string>
     <string name="error_location_permission">Vous n\'avez pas donné les permissions de géolocalisation !</string>
+    <string name="interest_points_sent">Les points d\'intérêts ont bien été envoyé sur la montre !</string>
+    <string name="interest_points_send_failed">Échec de l\'envoi des points d\'intérêts sur la montre.</string>
 </resources>

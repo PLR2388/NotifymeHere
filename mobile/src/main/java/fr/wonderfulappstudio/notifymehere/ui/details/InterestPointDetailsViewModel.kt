@@ -3,11 +3,9 @@ package fr.wonderfulappstudio.notifymehere.ui.details
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.wonderfulappstudio.notifymehere.Details
 import fr.wonderfulappstudio.notifymehere.model.InterestPoint
 import fr.wonderfulappstudio.notifymehere.repository.InterestPointRepository
 import kotlinx.coroutines.Dispatchers

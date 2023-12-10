@@ -1,6 +1,7 @@
 package fr.wonderfulappstudio.notifymehere
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -11,6 +12,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -22,6 +25,7 @@ import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.PutDataRequest
 import com.google.android.gms.wearable.Wearable
 import dagger.hilt.android.AndroidEntryPoint
+import fr.wonderfulappstudio.notifymehere.extension.showToast
 import fr.wonderfulappstudio.notifymehere.model.InterestPoint
 import fr.wonderfulappstudio.notifymehere.ui.details.InterestPointDetailsScreen
 import fr.wonderfulappstudio.notifymehere.ui.main.MainScreen
@@ -55,52 +59,61 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         actionBar?.hide()
+        setupContent()
+    }
+
+    private fun setupContent() {
         setContent {
             val navController = rememberNavController()
             val context = LocalContext.current
             NotifyMeHereTheme {
                 NavHost(navController = navController, startDestination = Main.route) {
-                    composable(Main.route) {
-                        MainScreen(
-                            onSendToWatch = {
-                                sendInterestPoints(it)
-                            },
-                            navigateToAddInterestPoint = {
-                                val route = if (it == null) {
-                                    Details.route
-                                } else {
-                                    Details.routeWithDetailsId(it)
-                                }
-                                navController.navigate(route)
-                            }, startWearableActivity = {
-                                startWearableActivity()
-                            })
-                    }
-                    composable(
-                        Details.route + "?${Details.detailsIdKey}={${Details.detailsIdKey}}",
-                        arguments = listOf(navArgument(Details.detailsIdKey) {
-                            defaultValue = -1
-                            type = NavType.IntType
-                        })
-                    ) { backStackEntry ->
-                        detailsViewModel.initInterestPoint(backStackEntry.arguments?.getInt(Details.detailsIdKey))
-                        InterestPointDetailsScreen(
-                            viewModel = detailsViewModel,
-                            onNavigateBack = {
-                                navController.popBackStack()
-                            }, onNavigateToMap = {
-                                context.startMapActivityForResult(
-                                    startMapForResult,
-                                    it.first.toFloat(),
-                                    it.second.toFloat()
-                                )
-                            })
-                    }
+                    setupNavGraph(navController, context)
                 }
-
             }
+        }
+    }
+
+    private fun NavGraphBuilder.setupNavGraph(
+        navController: NavHostController,
+        context: Context
+    ) {
+        composable(Main.route) {
+            MainScreen(
+                onSendToWatch = {
+                    sendInterestPoints(it)
+                },
+                navigateToAddInterestPoint = {
+                    val route = if (it == null) {
+                        Details.route
+                    } else {
+                        Details.routeWithDetailsId(it)
+                    }
+                    navController.navigate(route)
+                }, startWearableActivity = {
+                    startWearableActivity()
+                })
+        }
+        composable(
+            Details.route + "?${Details.detailsIdKey}={${Details.detailsIdKey}}",
+            arguments = listOf(navArgument(Details.detailsIdKey) {
+                defaultValue = -1
+                type = NavType.IntType
+            })
+        ) { backStackEntry ->
+            detailsViewModel.initInterestPoint(backStackEntry.arguments?.getInt(Details.detailsIdKey))
+            InterestPointDetailsScreen(
+                viewModel = detailsViewModel,
+                onNavigateBack = {
+                    navController.popBackStack()
+                }, onNavigateToMap = {
+                    context.startMapActivityForResult(
+                        startMapForResult,
+                        it.first.toFloat(),
+                        it.second.toFloat()
+                    )
+                })
         }
     }
 
@@ -148,10 +161,16 @@ class MainActivity : ComponentActivity() {
                 val result = dataClient.putDataItem(request).await()
 
                 Log.d(TAG, "DataItem saved: $result")
+                runOnUiThread {
+                    showToast(getString(R.string.interest_points_sent))
+                }
             } catch (cancellationException: CancellationException) {
                 throw cancellationException
             } catch (exception: Exception) {
                 Log.d(TAG, "Saving DataItem failed: $exception")
+                runOnUiThread {
+                    showToast(getString(R.string.interest_points_send_failed))
+                }
             }
         }
     }

@@ -24,4 +24,6 @@
     <string name="title_map">Pick a location</string>
     <string name="title_error">Error</string>
     <string name="error_location_permission">You didn\'t give location permission!</string>
+    <string name="interest_points_sent">Interest points sent to watch successfully.</string>
+    <string name="interest_points_send_failed">Failed to send interest points to watch.</string>
 </resources>
