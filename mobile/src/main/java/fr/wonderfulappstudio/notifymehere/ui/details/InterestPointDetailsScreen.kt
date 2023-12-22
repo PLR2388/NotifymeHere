@@ -92,7 +92,14 @@ fun InterestPointDetailsScreen(
 
     if (viewModel.showAlert) {
         viewModel.alertType?.let {
-            CustomAlert(alertType = it, onDismiss = viewModel::hideAlert)
+            if (it == AlertType.ExplanationLocationPermission) {
+                CustomAlert(alertType = it) {
+                    locationPermissionLauncher.launch(locationPermissions)
+                    viewModel.hideAlert()
+                }
+            } else {
+                CustomAlert(alertType = it, onDismiss = viewModel::hideAlert)
+            }
         }
     }
 
@@ -111,7 +118,7 @@ fun InterestPointDetailsScreen(
             Manifest.permission.ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
         if (!locationPermissionsAlreadyGranted) {
-            locationPermissionLauncher.launch(locationPermissions)
+            viewModel.displayLocationPermissionExplanation()
         }
     }
 

@@ -26,4 +26,5 @@
     <string name="error_location_permission">Vous n\'avez pas donné les permissions de géolocalisation !</string>
     <string name="interest_points_sent">Les points d\'intérêts ont bien été envoyé sur la montre !</string>
     <string name="interest_points_send_failed">Échec de l\'envoi des points d\'intérêts sur la montre.</string>
+    <string name="location_explanation">Notify me Here ! recueille des données de localisation pour vous donner un point de départ lorsque vous choisissez un lieu dans lequel vous souhaitez recevoir une alerte sur votre montre.</string>
 </resources>

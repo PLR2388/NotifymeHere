@@ -26,4 +26,5 @@
     <string name="error_location_permission">You didn\'t give location permission!</string>
     <string name="interest_points_sent">Interest points sent to watch successfully.</string>
     <string name="interest_points_send_failed">Failed to send interest points to watch.</string>
+    <string name="location_explanation">Notify me Here! collects location data to give you a starting point when you\'re picking a location in which you want to receive an alert on your wear.</string>
 </resources>

@@ -137,6 +137,11 @@ class InterestPointDetailsViewModel @Inject constructor(
         showAlert = true
     }
 
+    fun displayLocationPermissionExplanation() {
+        alertType = AlertType.ExplanationLocationPermission
+        showAlert = true
+    }
+
     fun setName(value: String) {
         uiState = uiState.copy(name = value)
     }
