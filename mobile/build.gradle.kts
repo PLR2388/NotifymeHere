@@ -62,8 +62,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
-    wearApp(project(":wear"))
-
     // Compose
     val composeBom = platform("androidx.compose:compose-bom:2023.01.00")
     implementation(composeBom)

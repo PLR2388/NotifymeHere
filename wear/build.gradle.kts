@@ -14,8 +14,8 @@ android {
     defaultConfig {
         applicationId = "fr.wonderfulappstudio.notifymehere"
         minSdk = 26
-        targetSdk = 34
-        versionCode = 1
+        targetSdk = 33
+        versionCode = 2
         versionName = "1.0"
         vectorDrawables {
             useSupportLibrary = true
@@ -73,8 +73,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-
-    wearApp(project(":wear"))
 
     // Compose Navigation
     implementation("androidx.wear.compose:compose-navigation:1.2.1")
