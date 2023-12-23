@@ -28,6 +28,7 @@ import fr.wonderfulappstudio.notifymehere.presentation.ui.Main
 import fr.wonderfulappstudio.notifymehere.presentation.ui.Settings
 import fr.wonderfulappstudio.notifymehere.presentation.ui.composable.CustomAlert
 import fr.wonderfulappstudio.notifymehere.presentation.ui.details.DetailsScreen
+import fr.wonderfulappstudio.notifymehere.presentation.ui.main.AlertType
 import fr.wonderfulappstudio.notifymehere.presentation.ui.main.MainScreen
 import fr.wonderfulappstudio.notifymehere.presentation.ui.main.MainViewModel
 import fr.wonderfulappstudio.notifymehere.presentation.ui.settings.SettingsScreen
@@ -143,54 +144,62 @@ class MainActivity : ComponentActivity() {
     companion object {
         const val locationIdKey = "location_id"
     }
-}
 
-@Composable
-fun WearApp(viewModel: MainViewModel, detailsId: Int?) {
-    val navController = rememberSwipeDismissableNavController()
+    @Composable
+    fun WearApp(viewModel: MainViewModel, detailsId: Int?) {
+        val navController = rememberSwipeDismissableNavController()
 
-    // Use LaunchedEffect to navigate once after composition
-    LaunchedEffect(Unit) {
-        if (detailsId != null) {
-            navController.navigate(Details.buildRouteWithArguments(detailsId, true))
-        }
-    }
-
-    CustomAlert(
-        viewModel.showAlert,
-        alertType = viewModel.alertType,
-        onDismiss = viewModel::hideAlert
-    )
-
-    NotifyMeHereTheme {
-        SwipeDismissableNavHost(
-            navController = navController,
-            startDestination = Main.route
-        ) {
-            composable(Main.route) {
-                MainScreen(viewModel = viewModel, onNavigateToDetails = {
-                    navController.navigate(Details.buildRouteWithArguments(it.id, false))
-                }, onNavigateToSettings = {
-                    navController.navigate(Settings.route)
-                })
+        // Use LaunchedEffect to navigate once after composition
+        LaunchedEffect(Unit) {
+            if (detailsId != null) {
+                navController.navigate(Details.buildRouteWithArguments(detailsId, true))
             }
-            composable(
-                Details.route + "/{${Details.detailsIdKey}}/{${Details.stopNotificationKey}}",
-                arguments = listOf(navArgument(Details.detailsIdKey) {
-                    defaultValue = -1
-                    type = NavType.IntType
-                }, navArgument(Details.stopNotificationKey) {
-                    defaultValue = false
-                    type = NavType.BoolType
-                })
-            ) {
-                DetailsScreen {
-                    navController.popBackStack()
+        }
+
+        CustomAlert(
+            viewModel.showAlert,
+            alertType = viewModel.alertType,
+            onDismiss = {
+                if (viewModel.alertType == AlertType.ExplanationLocationPermission) {
+                    requestLocationPermissions()
+                    viewModel.hideAlert()
+                } else {
+                    viewModel.hideAlert()
                 }
             }
-            composable(Settings.route) {
-                SettingsScreen()
+        )
+
+        NotifyMeHereTheme {
+            SwipeDismissableNavHost(
+                navController = navController,
+                startDestination = Main.route
+            ) {
+                composable(Main.route) {
+                    MainScreen(viewModel = viewModel, onNavigateToDetails = {
+                        navController.navigate(Details.buildRouteWithArguments(it.id, false))
+                    }, onNavigateToSettings = {
+                        navController.navigate(Settings.route)
+                    })
+                }
+                composable(
+                    Details.route + "/{${Details.detailsIdKey}}/{${Details.stopNotificationKey}}",
+                    arguments = listOf(navArgument(Details.detailsIdKey) {
+                        defaultValue = -1
+                        type = NavType.IntType
+                    }, navArgument(Details.stopNotificationKey) {
+                        defaultValue = false
+                        type = NavType.BoolType
+                    })
+                ) {
+                    DetailsScreen {
+                        navController.popBackStack()
+                    }
+                }
+                composable(Settings.route) {
+                    SettingsScreen()
+                }
             }
         }
     }
 }
+

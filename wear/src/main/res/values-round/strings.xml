@@ -17,4 +17,5 @@
     <string name="notification_permission_message_alert">You didn\'t give Notification permission so the app won\'t work correctly</string>
     <string name="location_permission_message_alert">You didn\'t give location permissions so the app won\'t work correctly</string>
     <string name="background_location_permission_message_alert">You didn\'t give background location permission so the app won\'t work correctly</string>
+    <string name="explanation_location_permissions">Notify me here! collects location data to notify you via a notification when you\'re near an interest point when the app is closed or not in use.</string>
 </resources>

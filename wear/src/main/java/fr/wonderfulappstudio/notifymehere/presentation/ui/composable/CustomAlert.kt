@@ -48,6 +48,11 @@ fun CustomAlert(showDialog: Boolean, alertType: AlertType?, onDismiss: () -> Uni
             )
 
         null -> Column {}
+        AlertType.ExplanationLocationPermission ->    Alert(
+            stringResource(R.string.explanation_location_permissions),
+            showDialog,
+            onDismiss
+        )
     }
 }
 
