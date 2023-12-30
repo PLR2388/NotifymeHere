@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -46,13 +47,23 @@ fun MainScreen(
     viewModel: MainViewModel = hiltViewModel(),
     navigateToAddInterestPoint: (Int?) -> Unit,
     onSendToWatch: (List<InterestPoint>) -> Unit,
-    startWearableActivity: () -> Unit
+    startWearableActivity: () -> Unit,
+    onOpenPrivacy: () -> Unit
 ) {
     val interestPoints by viewModel.interestPoints.collectAsState(initial = emptyList())
     val context = LocalContext.current
 
     Scaffold(topBar = {
         TopAppBar(title = { Text(stringResource(R.string.title_main)) }, actions = {
+            IconButton(onClick = onOpenPrivacy) {
+                Image(
+                    imageVector = Icons.Filled.Info,
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(
+                        MaterialTheme.colorScheme.onBackground
+                    )
+                )
+            }
             IconButton(onClick = {
                 context.showToast(context.getString(R.string.toast_start_wear_app))
                 startWearableActivity()

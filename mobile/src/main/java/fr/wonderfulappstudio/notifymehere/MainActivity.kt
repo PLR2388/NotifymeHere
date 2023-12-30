@@ -3,6 +3,7 @@ package fr.wonderfulappstudio.notifymehere
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -19,7 +20,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import fr.wonderfulappstudio.notifymehere.theme.NotifyMeHereTheme
 import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.PutDataRequest
@@ -27,9 +27,10 @@ import com.google.android.gms.wearable.Wearable
 import dagger.hilt.android.AndroidEntryPoint
 import fr.wonderfulappstudio.notifymehere.extension.showToast
 import fr.wonderfulappstudio.notifymehere.model.InterestPoint
+import fr.wonderfulappstudio.notifymehere.theme.NotifyMeHereTheme
 import fr.wonderfulappstudio.notifymehere.ui.details.InterestPointDetailsScreen
-import fr.wonderfulappstudio.notifymehere.ui.main.MainScreen
 import fr.wonderfulappstudio.notifymehere.ui.details.InterestPointDetailsViewModel
+import fr.wonderfulappstudio.notifymehere.ui.main.MainScreen
 import fr.wonderfulappstudio.notifymehere.ui.map.MapActivity
 import fr.wonderfulappstudio.notifymehere.ui.map.startMapActivityForResult
 import kotlinx.coroutines.CancellationException
@@ -38,6 +39,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.time.Instant
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -93,6 +95,10 @@ class MainActivity : ComponentActivity() {
                     navController.navigate(route)
                 }, startWearableActivity = {
                     startWearableActivity()
+                }, onOpenPrivacy = {
+                    val browserIntent =
+                        Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.privacy_url)))
+                    startActivity(browserIntent)
                 })
         }
         composable(
