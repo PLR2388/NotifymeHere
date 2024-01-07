@@ -15,7 +15,7 @@ android {
         applicationId = "fr.wonderfulappstudio.notifymehere"
         minSdk = 26
         targetSdk = 33
-        versionCode = 2
+        versionCode = 6
         versionName = "1.0"
         vectorDrawables {
             useSupportLibrary = true
@@ -53,6 +53,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":common"))
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("com.google.android.gms:play-services-wearable:18.1.0")
     implementation("androidx.percentlayout:percentlayout:1.0.0")

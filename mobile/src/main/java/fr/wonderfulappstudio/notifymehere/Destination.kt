@@ -12,8 +12,10 @@ object Details: Destination {
     override val route: String = "Details"
 
     const val detailsIdKey: String = "detailsId"
+    const val stopNotificationKey: String = "stopNotification"
 
-    fun routeWithDetailsId(detailsId: Int) = "$route?$detailsIdKey=$detailsId"
+    fun buildRouteWithArguments(detailsId: Int?, stopNotification: Boolean) =
+        "$route?$detailsIdKey=$detailsId&$stopNotificationKey=$stopNotification"
 }
 
 object Map: Destination {

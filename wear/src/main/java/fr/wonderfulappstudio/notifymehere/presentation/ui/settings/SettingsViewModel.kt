@@ -3,7 +3,7 @@ package fr.wonderfulappstudio.notifymehere.presentation.ui.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.wonderfulappstudio.notifymehere.presentation.manager.DataStoreManager
+import fr.wonderfulappstudio.common.manager.DataStoreManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject

@@ -16,4 +16,4 @@ dependencyResolutionManagement {
 rootProject.name = "Notify me Here!"
 include(":mobile")
 include(":wear")
- 
+include(":common")

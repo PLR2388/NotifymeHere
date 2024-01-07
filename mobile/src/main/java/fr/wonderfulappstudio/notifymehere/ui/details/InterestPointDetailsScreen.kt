@@ -2,6 +2,7 @@ package fr.wonderfulappstudio.notifymehere.ui.details
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.location.Location
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -64,7 +65,8 @@ enum class InterestPointDetailsState {
 fun InterestPointDetailsScreen(
     viewModel: InterestPointDetailsViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
-    onNavigateToMap: (Pair<Double, Double>) -> Unit
+    onNavigateToMap: (Location) -> Unit,
+    onRequestLocationPermission: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -73,28 +75,11 @@ fun InterestPointDetailsScreen(
         LocationServices.getFusedLocationProviderClient(context)
     }
 
-    val locationPermissions = arrayOf(
-        Manifest.permission.ACCESS_FINE_LOCATION,
-        Manifest.permission.ACCESS_COARSE_LOCATION
-    )
-
-    val locationPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestMultiplePermissions(),
-        onResult = { permissions ->
-            val permissionsGranted = permissions.values.reduce { acc, isPermissionGranted ->
-                acc && isPermissionGranted
-            }
-
-            if (!permissionsGranted) {
-                viewModel.displayNoPermissionForLocationAlert()
-            }
-        })
-
     if (viewModel.showAlert) {
         viewModel.alertType?.let {
             if (it == AlertType.ExplanationLocationPermission) {
                 CustomAlert(alertType = it) {
-                    locationPermissionLauncher.launch(locationPermissions)
+                    onRequestLocationPermission()
                     viewModel.hideAlert()
                 }
             } else {
@@ -129,10 +114,10 @@ fun InterestPointDetailsScreen(
                     InterestPointDetailsState.Add -> stringResource(R.string.title_details_add)
                     InterestPointDetailsState.Modify -> stringResource(
                         R.string.title_details_modify,
-                        viewModel.uiState.name
+                        viewModel.interestPoint.name
                     )
 
-                    InterestPointDetailsState.Read -> viewModel.uiState.name
+                    InterestPointDetailsState.Read -> viewModel.interestPoint.name
                 }
             )
         }, navigationIcon = {
@@ -174,7 +159,7 @@ fun InterestPointDetailsScreen(
             ) {
                 item {
                     OutlinedTextField(
-                        value = viewModel.uiState.name,
+                        value = viewModel.interestPoint.name,
                         onValueChange = viewModel::setName,
                         readOnly = viewModel.state == InterestPointDetailsState.Read,
                         label = { Text(stringResource(R.string.label_name)) })
@@ -182,7 +167,7 @@ fun InterestPointDetailsScreen(
                 }
                 item {
                     OutlinedTextField(
-                        value = viewModel.uiState.description ?: "",
+                        value = viewModel.interestPoint.description ?: "",
                         onValueChange = viewModel::setDescription,
                         readOnly = viewModel.state == InterestPointDetailsState.Read,
                         label = { Text(stringResource(R.string.label_description)) })
@@ -196,15 +181,15 @@ fun InterestPointDetailsScreen(
                         OutlinedTextField(
                             value = String.format(
                                 "%.10f; %.10f",
-                                viewModel.uiState.gpsPosition.first,
-                                viewModel.uiState.gpsPosition.second
+                                viewModel.interestPoint.position.latitude,
+                                viewModel.interestPoint.position.longitude
                             ),
                             onValueChange = {},
                             readOnly = true,
                             label = { Text(stringResource(R.string.label_gps_position)) })
                         OutlinedIconButton(onClick = {
                             if (viewModel.state == InterestPointDetailsState.Read) return@OutlinedIconButton
-                            if (viewModel.uiState.gpsPosition == Pair(0.0, 0.0)) {
+                            if (viewModel.interestPoint.position.latitude == 0.0 && viewModel.interestPoint.position.longitude == 0.0) {
                                 scope.launch(Dispatchers.IO) {
                                     val result = locationClient.getCurrentLocation(
                                         CurrentLocationRequest.Builder()
@@ -215,19 +200,16 @@ fun InterestPointDetailsScreen(
                                     ).await()
                                     withContext(Dispatchers.Main) {
                                         if (result == null) {
-                                            onNavigateToMap(viewModel.uiState.gpsPosition)
+                                            onNavigateToMap(viewModel.interestPoint.position)
                                         } else {
                                             onNavigateToMap(
-                                                Pair(
-                                                    result.latitude,
-                                                    result.longitude
-                                                )
+                                                result
                                             )
                                         }
                                     }
                                 }
                             } else {
-                                onNavigateToMap(viewModel.uiState.gpsPosition)
+                                onNavigateToMap(viewModel.interestPoint.position)
                             }
                         }) {
                             Icon(
@@ -240,7 +222,7 @@ fun InterestPointDetailsScreen(
                 item {
                     DatePickerField(
                         label = stringResource(R.string.label_start_date),
-                        text = viewModel.uiState.startDate?.convertMillisToDate() ?: "-",
+                        text = viewModel.interestPoint.startDate?.convertMillisToDate() ?: "-",
                         readOnly = viewModel.state == InterestPointDetailsState.Read,
                         onDateSelected = viewModel::setStartDate
                     )
@@ -248,7 +230,7 @@ fun InterestPointDetailsScreen(
                 item {
                     DatePickerField(
                         label = stringResource(R.string.label_end_date),
-                        text = viewModel.uiState.endDate?.convertMillisToDate() ?: "-",
+                        text = viewModel.interestPoint.endDate?.convertMillisToDate() ?: "-",
                         readOnly = viewModel.state == InterestPointDetailsState.Read,
                         onDateSelected = viewModel::setEndDate
                     )
@@ -281,6 +263,19 @@ fun InterestPointDetailsScreen(
                             colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
                         ) {
                             Text(stringResource(R.string.button_delete))
+                        }
+                    }
+                }
+                item {
+                    if (viewModel.interestPoint.alreadyNotify) {
+                        Button(
+                            onClick = viewModel::reactivateNotification,
+                            shape = RoundedCornerShape(Size.medium),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = Size.large),
+                        ) {
+                            Text(stringResource(id = R.string.button_activate_notification))
                         }
                     }
                 }

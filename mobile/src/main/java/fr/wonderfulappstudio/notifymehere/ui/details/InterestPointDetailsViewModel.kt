@@ -1,5 +1,6 @@
 package fr.wonderfulappstudio.notifymehere.ui.details
 
+import android.location.Location
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -23,7 +24,8 @@ class InterestPointDetailsViewModel @Inject constructor(
 
     var state: InterestPointDetailsState by mutableStateOf(InterestPointDetailsState.Add)
 
-    var uiState: InterestPointUiState by mutableStateOf(InterestPointUiState())
+    var interestPoint: InterestPoint by mutableStateOf(InterestPoint())
+        private set
 
     var isLoading: Boolean by mutableStateOf(false)
         private set
@@ -37,40 +39,28 @@ class InterestPointDetailsViewModel @Inject constructor(
     var showSuccess: Boolean by mutableStateOf(false)
         private set
 
-    private fun buildInterestPoint(): InterestPoint {
-        val id = if (detailsId == null || detailsId == -1) null else detailsId
-        return InterestPoint(
-            id,
-            uiState.name,
-            uiState.description,
-            uiState.gpsPosition,
-            uiState.startDate,
-            uiState.endDate
-        )
-    }
-
-    fun initInterestPoint(detailsId: Int?) {
+    fun initInterestPoint(detailsId: Int?, stopNotification: Boolean) {
         this.detailsId = detailsId
         if (detailsId == null || detailsId == -1) {
             state = InterestPointDetailsState.Add
-            uiState = InterestPointUiState()
         } else {
             viewModelScope.launch(Dispatchers.IO) {
-                val interestPoint = interestPointRepository.getInterestPointById(detailsId)
+                val fetchedInterestPoint = interestPointRepository.getInterestPointById(detailsId)
                 withContext(Dispatchers.Main) {
-                    uiState = if (interestPoint == null) {
+                    interestPoint = if (fetchedInterestPoint == null) {
                         state = InterestPointDetailsState.Add
-                        InterestPointUiState()
+                        InterestPoint()
                     } else {
                         state = InterestPointDetailsState.Read
-                        uiState.copy(
-                            name = interestPoint.name,
-                            description = interestPoint.description,
-                            gpsPosition = interestPoint.gpsPosition,
-                            startDate = interestPoint.startDate,
-                            endDate = interestPoint.endDate
-                        )
+                        fetchedInterestPoint
                     }
+                }
+                if (stopNotification) {
+                    interestPoint = interestPoint.copy(alreadyNotify = true)
+                    viewModelScope.launch(Dispatchers.IO) {
+                        interestPointRepository.update(interestPoint)
+                    }
+
                 }
             }
 
@@ -79,7 +69,6 @@ class InterestPointDetailsViewModel @Inject constructor(
 
     fun delete(completion: () -> Unit) {
         isLoading = true
-        val interestPoint = buildInterestPoint()
         viewModelScope.launch(Dispatchers.IO) {
             interestPointRepository.delete(interestPoint)
             withContext(Dispatchers.Main) {
@@ -101,22 +90,28 @@ class InterestPointDetailsViewModel @Inject constructor(
         showAlert = false
     }
 
+    fun reactivateNotification() {
+        interestPoint = interestPoint.copy(alreadyNotify = false)
+        viewModelScope.launch(Dispatchers.IO) {
+            interestPointRepository.update(interestPoint)
+        }
+    }
+
     fun saveInterestPoint(onDismiss: () -> Unit) {
         isLoading = true
-        if (uiState.name.isEmpty()) {
+        if (interestPoint.name.isEmpty()) {
             alertType = AlertType.NameIsEmpty
             showAlert = true
             isLoading = false
-        } else if (uiState.gpsPosition == Pair(0.0, 0.0)) {
+        } else if (interestPoint.position.latitude == 0.0 && interestPoint.position.longitude == 0.0) {
             alertType = AlertType.PositionIsEmpty
             showAlert = true
             isLoading = false
-        } else if (uiState.startDate != null && uiState.endDate != null && uiState.endDate!! < uiState.startDate!!) {
+        } else if (interestPoint.startDate != null && interestPoint.endDate != null && interestPoint.endDate!! < interestPoint.startDate!!) {
             alertType = AlertType.StartDateGreaterEndDate
             showAlert = true
             isLoading = false
         } else {
-            val interestPoint = buildInterestPoint()
             viewModelScope.launch(Dispatchers.IO) {
                 if (interestPoint.id == null) {
                     interestPointRepository.insert(interestPoint)
@@ -143,24 +138,37 @@ class InterestPointDetailsViewModel @Inject constructor(
     }
 
     fun setName(value: String) {
-        uiState = uiState.copy(name = value)
+        interestPoint = interestPoint.copy(name = value)
     }
 
     fun setDescription(value: String?) {
-        uiState = uiState.copy(description = value)
+        interestPoint = interestPoint.copy(description = value)
     }
 
-    fun setGpsPosition(value: Pair<Double, Double>) {
-        uiState = uiState.copy(gpsPosition = value)
+    fun setPosition(latitude: Double, longitude: Double) {
+        interestPoint = interestPoint.copy(position = Location("app").apply {
+            this.latitude = latitude
+            this.longitude = longitude
+        })
     }
 
     fun setStartDate(value: Long?) {
         if (value == null) return
-        uiState = uiState.copy(startDate = value)
+        interestPoint = interestPoint.copy(startDate = value)
     }
 
     fun setEndDate(value: Long?) {
         if (value == null) return
-        uiState = uiState.copy(endDate = value)
+        interestPoint = interestPoint.copy(endDate = value)
+    }
+
+    fun displayBackgroundLocationPermissionNotGranted() {
+        alertType = AlertType.BackgroundLocationPermissionNotGranted
+        showAlert = true
+    }
+
+    fun displayLocationPermissionNotGranted() {
+        alertType = AlertType.LocationPermissionsNotGranted
+        showAlert = true
     }
 }

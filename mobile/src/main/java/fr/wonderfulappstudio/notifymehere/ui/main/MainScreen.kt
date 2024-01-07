@@ -1,5 +1,6 @@
 package fr.wonderfulappstudio.notifymehere.ui.main
 
+import android.location.Location
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -138,7 +139,7 @@ fun InterestPointCard(interestPoint: InterestPoint, navigateTo: (InterestPoint) 
             Column(verticalArrangement = Arrangement.SpaceBetween) {
                 Text(interestPoint.name, fontWeight = FontWeight.Bold)
                 Text(
-                    "${interestPoint.gpsPosition.first}, ${interestPoint.gpsPosition.second}",
+                    "${interestPoint.position.latitude}, ${interestPoint.position.longitude}",
                     fontWeight = FontWeight.Light
                 )
             }
@@ -158,7 +159,10 @@ fun InterestPointCardPreview() {
             1,
             "House",
             "Where I live",
-            Pair(48.862725, 2.287592),
+            Location("app").apply {
+                latitude = 48.862725
+                longitude = 2.287592
+            },
             1698755587,
             1698955587
         ), navigateTo = {})

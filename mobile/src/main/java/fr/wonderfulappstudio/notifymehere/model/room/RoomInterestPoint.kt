@@ -11,5 +11,6 @@ data class RoomInterestPoint(
     val latitude: Double,
     val longitude: Double,
     val startDate: Long,
-    val endDate: Long
+    val endDate: Long,
+    val alreadyNotify: Boolean
 )

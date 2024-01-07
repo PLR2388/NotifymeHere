@@ -18,9 +18,9 @@ import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.google.android.gms.wearable.Wearable
 import dagger.hilt.android.AndroidEntryPoint
-import fr.wonderfulappstudio.notifymehere.presentation.manager.MultiplePermissionsResultCallback
-import fr.wonderfulappstudio.notifymehere.presentation.manager.PermissionManager
-import fr.wonderfulappstudio.notifymehere.presentation.manager.PermissionResultCallback
+import fr.wonderfulappstudio.common.manager.MultiplePermissionsResultCallback
+import fr.wonderfulappstudio.common.manager.PermissionManager
+import fr.wonderfulappstudio.common.manager.PermissionResultCallback
 import fr.wonderfulappstudio.notifymehere.presentation.service.LocationService
 import fr.wonderfulappstudio.notifymehere.presentation.theme.NotifyMeHereTheme
 import fr.wonderfulappstudio.notifymehere.presentation.ui.Details

@@ -7,10 +7,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import fr.wonderfulappstudio.common.manager.DataStoreManager
 import fr.wonderfulappstudio.notifymehere.presentation.dao.InterestPointDao
 import fr.wonderfulappstudio.notifymehere.presentation.data.NotifyMeHereDatabase
 import fr.wonderfulappstudio.notifymehere.presentation.datasource.InterestPointDatasource
-import fr.wonderfulappstudio.notifymehere.presentation.manager.DataStoreManager
 import fr.wonderfulappstudio.notifymehere.presentation.repository.InterestPointRepository
 import javax.inject.Singleton
 

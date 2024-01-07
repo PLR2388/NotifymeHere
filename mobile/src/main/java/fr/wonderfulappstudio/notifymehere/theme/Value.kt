@@ -14,3 +14,7 @@ object Time {
     const val oneSecondInMilliseconds: Long = 1000
     const val oneDayInMilliseconds: Long = 86_400_000
 }
+
+object Distance {
+    const val defaultNotificationDistance: Int = 500
+}

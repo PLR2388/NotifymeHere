@@ -26,6 +26,11 @@
     <string name="error_location_permission">You didn\'t give location permission!</string>
     <string name="interest_points_sent">Interest points sent to watch successfully.</string>
     <string name="interest_points_send_failed">Failed to send interest points to watch.</string>
-    <string name="location_explanation">Notify me Here! collects location data to give you a starting point when you\'re picking a location in which you want to receive an alert on your wear. Background location will be needed when the app is closed on your wear. This will be used to detect when you\'re near a location when the app is not in use.</string>
+    <string name="location_explanation">Notify Me Here! collects location data to enable having a starting location position when you create an interest point \&amp; notifying you when you near an interest point on your wear even when the app is closed or not in use.</string>
     <string name="privacy_url">https://paul-louis.fr/privacy-application#NotifyMeHere</string>
+    <string name="text_in_progress">Running…</string>
+    <string name="notification_permission_message_alert">You didn\'t give Notification permission so the app won\'t work correctly</string>
+    <string name="location_permission_message_alert">You didn\'t give location permissions so the app won\'t work correctly</string>
+    <string name="background_location_permission_message_alert">You didn\'t give background location permission so the app won\'t work correctly</string>
+    <string name="button_activate_notification">Activate notifications</string>
 </resources>

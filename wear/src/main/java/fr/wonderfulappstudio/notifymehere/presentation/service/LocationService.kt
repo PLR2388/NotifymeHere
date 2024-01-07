@@ -18,12 +18,12 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
+import fr.wonderfulappstudio.common.manager.DataStoreManager
 import fr.wonderfulappstudio.notifymehere.R
 import fr.wonderfulappstudio.notifymehere.presentation.MainActivity
 import fr.wonderfulappstudio.notifymehere.presentation.MainActivity.Companion.locationIdKey
 import fr.wonderfulappstudio.notifymehere.presentation.NotifyMeHereApplication.Companion.MAIN_CHANNEL_ID
 import fr.wonderfulappstudio.notifymehere.presentation.NotifyMeHereApplication.Companion.MAIN_SERVICE_NOTIFICATION_ID
-import fr.wonderfulappstudio.notifymehere.presentation.manager.DataStoreManager
 import fr.wonderfulappstudio.notifymehere.presentation.model.InterestPoint
 import fr.wonderfulappstudio.notifymehere.presentation.repository.InterestPointRepository
 import kotlinx.coroutines.CoroutineScope

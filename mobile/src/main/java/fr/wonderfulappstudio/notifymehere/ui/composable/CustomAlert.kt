@@ -52,6 +52,7 @@ fun CustomAlert(alertType: AlertType, onDismiss: () -> Unit) {
                         Text(stringResource(R.string.button_ok))
                     }
                 })
+
         AlertType.NoLocationPermission ->
             AlertDialog(
                 onDismissRequest = onDismiss,
@@ -65,6 +66,7 @@ fun CustomAlert(alertType: AlertType, onDismiss: () -> Unit) {
                         Text(stringResource(R.string.button_ok))
                     }
                 })
+
         AlertType.ExplanationLocationPermission ->
             AlertDialog(
                 onDismissRequest = onDismiss,
@@ -77,5 +79,41 @@ fun CustomAlert(alertType: AlertType, onDismiss: () -> Unit) {
                         Text(stringResource(R.string.button_ok))
                     }
                 })
+
+        AlertType.NotificationPermissionNotGranted -> AlertDialog(
+            onDismissRequest = onDismiss,
+            text = {
+                Text(
+                    text = stringResource(id = R.string.notification_permission_message_alert)
+                )
+            }, confirmButton = {
+                Button(onClick = onDismiss) {
+                    Text(stringResource(R.string.button_ok))
+                }
+            })
+
+        AlertType.BackgroundLocationPermissionNotGranted -> AlertDialog(
+            onDismissRequest = onDismiss,
+            text = {
+                Text(
+                    text = stringResource(id = R.string.background_location_permission_message_alert)
+                )
+            }, confirmButton = {
+                Button(onClick = onDismiss) {
+                    Text(stringResource(R.string.button_ok))
+                }
+            })
+
+        AlertType.LocationPermissionsNotGranted -> AlertDialog(
+            onDismissRequest = onDismiss,
+            text = {
+                Text(
+                    text = stringResource(id = R.string.location_permission_message_alert)
+                )
+            }, confirmButton = {
+                Button(onClick = onDismiss) {
+                    Text(stringResource(R.string.button_ok))
+                }
+            })
     }
 }
