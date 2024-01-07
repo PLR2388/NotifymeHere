@@ -26,7 +26,7 @@
     <string name="error_location_permission">Vous n\'avez pas donné les permissions de géolocalisation !</string>
     <string name="interest_points_sent">Les points d\'intérêts ont bien été envoyé sur la montre !</string>
     <string name="interest_points_send_failed">Échec de l\'envoi des points d\'intérêts sur la montre.</string>
-    <string name="location_explanation">Notify Me Here! recueille des données de localisation pour vous permettre d\'avoir une position de départ lorsque vous créez un point d\'intérêt &amp; vous notifier lorsque vous vous approchez d\'un point d\'intérêt sur votre montre, même lorsque l\'application est fermée ou n\'est pas utilisée.</string>
+    <string name="location_explanation">Notify Me Here! recueille des données de localisation pour vous permettre d\'avoir une position de départ lorsque vous créez un point d\'intérêt &amp; vous notifier lorsque vous vous approchez d\'un point d\'intérêt, même lorsque l\'application est fermée ou n\'est pas utilisée.</string>
     <string name="privacy_url">https://paul-louis.fr/privacy-application#NotifyMeHereFR</string>
     <string name="text_in_progress">En cours…</string>
     <string name="notification_permission_message_alert">Vous n\'avez pas donné les permissions pour les notifications donc l\'app ne fonctionnera pas correctement</string>
