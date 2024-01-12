@@ -23,9 +23,11 @@ import fr.wonderfulappstudio.common.manager.PermissionManager
 import fr.wonderfulappstudio.common.manager.PermissionResultCallback
 import fr.wonderfulappstudio.notifymehere.presentation.service.LocationService
 import fr.wonderfulappstudio.notifymehere.presentation.theme.NotifyMeHereTheme
+import fr.wonderfulappstudio.notifymehere.presentation.ui.BrandedLaunch
 import fr.wonderfulappstudio.notifymehere.presentation.ui.Details
 import fr.wonderfulappstudio.notifymehere.presentation.ui.Main
 import fr.wonderfulappstudio.notifymehere.presentation.ui.Settings
+import fr.wonderfulappstudio.notifymehere.presentation.ui.brandedlaunch.BrandedLaunchScreen
 import fr.wonderfulappstudio.notifymehere.presentation.ui.composable.CustomAlert
 import fr.wonderfulappstudio.notifymehere.presentation.ui.details.DetailsScreen
 import fr.wonderfulappstudio.notifymehere.presentation.ui.main.AlertType
@@ -172,8 +174,16 @@ class MainActivity : ComponentActivity() {
         NotifyMeHereTheme {
             SwipeDismissableNavHost(
                 navController = navController,
-                startDestination = Main.route
+                startDestination = BrandedLaunch.route
             ) {
+                composable(BrandedLaunch.route) {
+                    BrandedLaunchScreen {
+                        navController.navigate(Main.route) {
+                            // Pop up the splash screen from the back stack so it's not returned to
+                            popUpTo(BrandedLaunch.route) { inclusive = true }
+                        }
+                    }
+                }
                 composable(Main.route) {
                     MainScreen(viewModel = viewModel, onNavigateToDetails = {
                         navController.navigate(Details.buildRouteWithArguments(it.id, false))
