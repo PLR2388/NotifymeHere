@@ -3,6 +3,7 @@ package fr.wonderfulappstudio.notifymehere.presentation.ui.main
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -15,6 +16,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.material.Chip
+import androidx.wear.compose.material.PositionIndicator
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.TimeText
@@ -27,8 +29,11 @@ fun MainScreen(
     onNavigateToDetails: (InterestPoint) -> Unit,
     onNavigateToSettings: () -> Unit
 ) {
+    val positionScrollState = rememberScrollState()
     val interestPoints by viewModel.interestPoints.collectAsState(initial = emptyList())
-    Scaffold(timeText = { TimeText() }) {
+    Scaffold(
+        timeText = { TimeText() },
+        positionIndicator = { PositionIndicator(scrollState = positionScrollState) }) {
         ScalingLazyColumn {
             if (interestPoints.isEmpty()) {
                 item {
