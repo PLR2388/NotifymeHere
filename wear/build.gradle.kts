@@ -96,4 +96,7 @@ dependencies {
     implementation("androidx.room:room-ktx:2.6.0")
 
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+    // Branded launch
+    implementation("androidx.core:core-splashscreen:1.1.0-alpha02")
 }

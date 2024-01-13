@@ -4,10 +4,6 @@ interface Destination {
     val route: String
 }
 
-object BrandedLaunch: Destination {
-    override val route: String = "BrandedLaunch"
-}
-
 object Main: Destination {
     override val route: String = "Main"
 }
