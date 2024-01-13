@@ -15,7 +15,7 @@ android {
         applicationId = "fr.wonderfulappstudio.notifymehere"
         minSdk = 26
         targetSdk = 33
-        versionCode = 10
+        versionCode = 11
         versionName = "1.0"
         vectorDrawables {
             useSupportLibrary = true
