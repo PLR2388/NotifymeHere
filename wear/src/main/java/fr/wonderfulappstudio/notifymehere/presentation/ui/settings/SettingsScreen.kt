@@ -5,8 +5,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -36,12 +36,12 @@ import kotlinx.coroutines.launch
 fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
-    val positionScrollState = rememberScrollState()
+
     val notificationDistance by viewModel.notificationDistance.collectAsState(initial = null)
     val listState = rememberScalingLazyListState()
-    Scaffold(timeText = { TimeText() }, positionIndicator = {
-        PositionIndicator(scrollState = positionScrollState)
-    }) {
+    Scaffold(
+        timeText = { TimeText() },
+        positionIndicator = { PositionIndicator(scalingLazyListState = listState) }) {
         val focusRequester = rememberActiveFocusRequester()
         val coroutineScope = rememberCoroutineScope()
         ScalingLazyColumn(modifier = Modifier
@@ -58,7 +58,13 @@ fun SettingsScreen(
             state = listState) {
 
             item {
-                Text(stringResource(R.string.question_accuracy))
+                Text(
+                    stringResource(R.string.question_accuracy),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = Size.SettingScreen.horizontalPaddingFirstElement)
+                        .padding(top = Size.SettingScreen.topPaddingFirstElement)
+                )
             }
             item {
                 Text(stringResource(R.string.label_accuracy))

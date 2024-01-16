@@ -40,12 +40,11 @@ fun MainScreen(
     onNavigateToDetails: (InterestPoint) -> Unit,
     onNavigateToSettings: () -> Unit
 ) {
-    val positionScrollState = rememberScrollState()
     val interestPoints by viewModel.interestPoints.collectAsState(initial = emptyList())
     val listState = rememberScalingLazyListState()
     Scaffold(
         timeText = { TimeText() },
-        positionIndicator = { PositionIndicator(scrollState = positionScrollState) }) {
+        positionIndicator = { PositionIndicator(scalingLazyListState = listState) }) {
         val focusRequester = rememberActiveFocusRequester()
         val coroutineScope = rememberCoroutineScope()
         ScalingLazyColumn(modifier = Modifier

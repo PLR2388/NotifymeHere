@@ -37,11 +37,10 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalWearFoundationApi::class)
 @Composable
 fun DetailsScreen(viewModel: DetailViewModel = hiltViewModel(), onBack: () -> Unit) {
-    val positionScrollState = rememberScrollState()
     val listState = rememberScalingLazyListState()
     Scaffold(
         timeText = { TimeText() },
-        positionIndicator = { PositionIndicator(scrollState = positionScrollState) }) {
+        positionIndicator = { PositionIndicator(scalingLazyListState = listState) }) {
         val focusRequester = rememberActiveFocusRequester()
         val coroutineScope = rememberCoroutineScope()
         ScalingLazyColumn(
