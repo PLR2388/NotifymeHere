@@ -57,7 +57,6 @@ class LocationService : Service() {
 
     override fun onBind(p0: Intent?): IBinder? = null
 
-
     override fun onCreate() {
         super.onCreate()
         serviceScope.launch {
@@ -126,13 +125,6 @@ class LocationService : Service() {
                         Manifest.permission.POST_NOTIFICATIONS
                     ) != PackageManager.PERMISSION_GRANTED
                 ) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
                     return
                 }
                 notify(MAIN_SERVICE_NOTIFICATION_ID, builder)
@@ -151,8 +143,9 @@ class LocationService : Service() {
                     if (interestPoint.position.distanceTo(lastLocation) < notificationDistance) {
                         interestPoint.id?.let {
                             sendNotification(
-                                "You're near an interest point!", interestPoint.name,
-                                it
+                                title = getString(R.string.default_alert),
+                                content = interestPoint.name,
+                                id = it
                             )
                         }
                     }

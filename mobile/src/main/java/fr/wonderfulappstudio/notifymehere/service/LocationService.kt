@@ -57,7 +57,6 @@ class LocationService : Service() {
 
     override fun onBind(p0: Intent?): IBinder? = null
 
-
     override fun onCreate() {
         super.onCreate()
         serviceScope.launch {
@@ -144,7 +143,7 @@ class LocationService : Service() {
                     if (interestPoint.position.distanceTo(lastLocation) < notificationDistance) {
                         interestPoint.id?.let {
                             sendNotification(
-                                "You're near an interest point!", interestPoint.name,
+                                getString(R.string.default_alert), interestPoint.name,
                                 it
                             )
                         }

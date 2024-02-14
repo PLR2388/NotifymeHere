@@ -19,4 +19,5 @@
     <string name="location_permission_message_alert">Vous n\'avez pas donné les permissions pour la localisation donc l\'app ne fonctionnera pas correctement</string>
     <string name="background_location_permission_message_alert">Vous n\'avez pas donné les permissions pour la localisation d\'arrière-plan donc l\'app ne fonctionnera pas correctement</string>
     <string name="explanation_location_permissions">Notify me here ! recueille des données de localisation pour vous avertir par le biais d\'une notification lorsque vous vous trouvez à proximité d\'un point d\'intérêt, alors que l\'application est fermée ou non utilisée.</string>
+    <string name="default_alert">Vous êtes près d\'un point d\'intérêt !</string>
 </resources>

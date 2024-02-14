@@ -33,4 +33,5 @@
     <string name="location_permission_message_alert">You didn\'t give location permissions so the app won\'t work correctly</string>
     <string name="background_location_permission_message_alert">You didn\'t give background location permission so the app won\'t work correctly</string>
     <string name="button_activate_notification">Activate notifications</string>
+    <string name="default_alert">You\'re near an interest point!</string>
 </resources>

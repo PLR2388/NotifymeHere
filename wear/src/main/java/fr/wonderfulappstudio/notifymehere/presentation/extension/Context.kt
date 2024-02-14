@@ -1,4 +1,4 @@
-package fr.wonderfulappstudio.notifymehere.presentation.utils
+package fr.wonderfulappstudio.notifymehere.presentation.extension
 
 import android.app.ActivityManager
 import android.content.Context

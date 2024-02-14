@@ -1,4 +1,4 @@
-package fr.wonderfulappstudio.notifymehere.presentation.utils
+package fr.wonderfulappstudio.notifymehere.presentation.extension
 
 import android.location.Location
 import com.google.android.gms.wearable.DataMap

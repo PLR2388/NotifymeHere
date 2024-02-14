@@ -19,7 +19,7 @@ import androidx.wear.compose.material.dialog.Dialog
 import fr.wonderfulappstudio.notifymehere.R
 import fr.wonderfulappstudio.notifymehere.presentation.theme.Size
 import fr.wonderfulappstudio.notifymehere.presentation.ui.main.AlertType
-import fr.wonderfulappstudio.notifymehere.presentation.utils.openAppSettings
+import fr.wonderfulappstudio.notifymehere.presentation.extension.openAppSettings
 
 @Composable
 fun CustomAlert(showDialog: Boolean, alertType: AlertType?, onDismiss: () -> Unit) {
@@ -48,7 +48,7 @@ fun CustomAlert(showDialog: Boolean, alertType: AlertType?, onDismiss: () -> Uni
             )
 
         null -> Column {}
-        AlertType.ExplanationLocationPermission ->    Alert(
+        AlertType.ExplanationLocationPermission -> Alert(
             stringResource(R.string.explanation_location_permissions),
             showDialog,
             onDismiss

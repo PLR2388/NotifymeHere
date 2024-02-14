@@ -16,7 +16,7 @@ import fr.wonderfulappstudio.notifymehere.presentation.model.InterestPoint
 import fr.wonderfulappstudio.notifymehere.presentation.repository.InterestPointRepository
 import fr.wonderfulappstudio.notifymehere.presentation.service.DataLayerListenerService.Companion.INTEREST_POINTS_KEY
 import fr.wonderfulappstudio.notifymehere.presentation.service.DataLayerListenerService.Companion.INTEREST_POINTS_PATH
-import fr.wonderfulappstudio.notifymehere.presentation.utils.toInterestPoint
+import fr.wonderfulappstudio.notifymehere.presentation.extension.toInterestPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch

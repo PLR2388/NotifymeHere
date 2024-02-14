@@ -23,7 +23,6 @@ interface InterestPointDao {
     fun getAll(): Flow<List<RoomInterestPoint>>
 
     @Query("SELECT * FROM RoomInterestPoint WHERE id = :id")
-    fun getInterestPointById(id: Int): RoomInterestPoint?
-
+    suspend fun getInterestPointById(id: Int): RoomInterestPoint?
 
 }

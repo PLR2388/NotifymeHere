@@ -22,5 +22,5 @@ interface InterestPointDao {
     fun getAll(): Flow<List<RoomInterestPoint>>
 
     @Delete
-    fun delete(roomInterestPoint: RoomInterestPoint)
+    suspend fun delete(roomInterestPoint: RoomInterestPoint)
 }

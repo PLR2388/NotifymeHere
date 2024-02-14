@@ -23,7 +23,7 @@ class InterestPointDatasource @Inject constructor(private val interestPointDao: 
         interestPointDao.delete(interestPoint.toRoomInterestPoint())
     }
 
-    fun getInterestPointById(id: Int): InterestPoint? {
+    suspend fun getInterestPointById(id: Int): InterestPoint? {
         val roomInterestPoint = interestPointDao.getInterestPointById(id)
         return if (roomInterestPoint == null) {
             null

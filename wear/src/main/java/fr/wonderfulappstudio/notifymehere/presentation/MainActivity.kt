@@ -33,7 +33,7 @@ import fr.wonderfulappstudio.notifymehere.presentation.ui.main.AlertType
 import fr.wonderfulappstudio.notifymehere.presentation.ui.main.MainScreen
 import fr.wonderfulappstudio.notifymehere.presentation.ui.main.MainViewModel
 import fr.wonderfulappstudio.notifymehere.presentation.ui.settings.SettingsScreen
-import fr.wonderfulappstudio.notifymehere.presentation.utils.isLocationServiceRunning
+import fr.wonderfulappstudio.notifymehere.presentation.extension.isLocationServiceRunning
 
 
 @AndroidEntryPoint
