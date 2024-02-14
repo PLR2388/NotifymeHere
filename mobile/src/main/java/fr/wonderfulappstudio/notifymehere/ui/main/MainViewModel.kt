@@ -22,6 +22,10 @@ class MainViewModel @Inject constructor(interestPointRepository: InterestPointRe
     var showAlert: Boolean by mutableStateOf(false)
         private set
 
+    fun hideAlert() {
+        showAlert = false
+    }
+
     fun displayNotificationPermissionNotGranted() {
         alertType = AlertType.NotificationPermissionNotGranted
         showAlert = true

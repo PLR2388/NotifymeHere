@@ -53,20 +53,6 @@ fun CustomAlert(alertType: AlertType, onDismiss: () -> Unit) {
                     }
                 })
 
-        AlertType.NoLocationPermission ->
-            AlertDialog(
-                onDismissRequest = onDismiss,
-                title = { Text(text = stringResource(R.string.title_error)) },
-                text = {
-                    Text(
-                        text = stringResource(R.string.error_location_permission)
-                    )
-                }, confirmButton = {
-                    Button(onClick = onDismiss) {
-                        Text(stringResource(R.string.button_ok))
-                    }
-                })
-
         AlertType.ExplanationLocationPermission ->
             AlertDialog(
                 onDismissRequest = onDismiss,

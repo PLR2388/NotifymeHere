@@ -41,6 +41,7 @@ import fr.wonderfulappstudio.notifymehere.R
 import fr.wonderfulappstudio.notifymehere.extension.showToast
 import fr.wonderfulappstudio.notifymehere.model.InterestPoint
 import fr.wonderfulappstudio.notifymehere.theme.Size
+import fr.wonderfulappstudio.notifymehere.ui.composable.CustomAlert
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,6 +54,12 @@ fun MainScreen(
 ) {
     val interestPoints by viewModel.interestPoints.collectAsState(initial = emptyList())
     val context = LocalContext.current
+
+    if (viewModel.showAlert) {
+        viewModel.alertType?.let {
+            CustomAlert(alertType = it, onDismiss = viewModel::hideAlert)
+        }
+    }
 
     Scaffold(topBar = {
         TopAppBar(title = { Text(stringResource(R.string.title_main)) }, actions = {

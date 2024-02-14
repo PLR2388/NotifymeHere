@@ -4,7 +4,6 @@ enum class AlertType {
     NameIsEmpty,
     PositionIsEmpty,
     StartDateGreaterEndDate,
-    NoLocationPermission,
     ExplanationLocationPermission,
     NotificationPermissionNotGranted,
     BackgroundLocationPermissionNotGranted,

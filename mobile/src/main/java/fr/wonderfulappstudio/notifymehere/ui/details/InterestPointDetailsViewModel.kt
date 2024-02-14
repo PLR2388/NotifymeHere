@@ -127,11 +127,6 @@ class InterestPointDetailsViewModel @Inject constructor(
         }
     }
 
-    fun displayNoPermissionForLocationAlert() {
-        alertType = AlertType.NoLocationPermission
-        showAlert = true
-    }
-
     fun displayLocationPermissionExplanation() {
         alertType = AlertType.ExplanationLocationPermission
         showAlert = true

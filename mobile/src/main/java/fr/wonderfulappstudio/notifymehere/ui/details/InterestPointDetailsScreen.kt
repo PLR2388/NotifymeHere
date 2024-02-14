@@ -3,8 +3,6 @@ package fr.wonderfulappstudio.notifymehere.ui.details
 import android.Manifest
 import android.content.pm.PackageManager
 import android.location.Location
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
