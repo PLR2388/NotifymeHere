@@ -15,7 +15,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.wear.compose.foundation.ExperimentalWearFoundationApi
@@ -26,10 +25,10 @@ import androidx.wear.compose.foundation.rememberActiveFocusRequester
 import androidx.wear.compose.material.Chip
 import androidx.wear.compose.material.PositionIndicator
 import androidx.wear.compose.material.Scaffold
-import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.TimeText
 import fr.wonderfulappstudio.notifymehere.R
 import fr.wonderfulappstudio.notifymehere.presentation.model.InterestPoint
+import fr.wonderfulappstudio.notifymehere.presentation.ui.composable.BasicText
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalWearFoundationApi::class)
@@ -60,7 +59,7 @@ fun MainScreen(
             state = listState) {
             if (interestPoints.isEmpty()) {
                 item {
-                    Text(stringResource(R.string.text_no_interest_points))
+                    BasicText(text = stringResource(R.string.text_no_interest_points))
                 }
             } else {
                 item {
@@ -71,24 +70,19 @@ fun MainScreen(
                         onClick = { onNavigateToDetails(interestPoint) },
                         enabled = true,
                         label = {
-                            Text(
-                                text = interestPoint.name,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
+                            BasicText(text = interestPoint.name, maxLines = 1)
                         },
                         secondaryLabel = {
-                            Text(
+                            BasicText(
                                 text = "${interestPoint.position.latitude}; ${interestPoint.position.longitude}",
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
+                                maxLines = 1
                             )
                         },
                     )
                 }
                 item {
                     Chip(label = {
-                        Text(stringResource(R.string.button_settings))
+                        BasicText(text = stringResource(R.string.button_settings))
                     }, onClick = onNavigateToSettings, icon = {
                         Image(
                             painterResource(id = R.drawable.ic_settings),

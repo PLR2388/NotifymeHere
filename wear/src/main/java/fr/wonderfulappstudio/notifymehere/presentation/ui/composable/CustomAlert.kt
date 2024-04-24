@@ -14,7 +14,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.material.Chip
-import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.dialog.Dialog
 import fr.wonderfulappstudio.notifymehere.R
 import fr.wonderfulappstudio.notifymehere.presentation.theme.Size
@@ -71,14 +70,11 @@ private fun Alert(message: String, showDialog: Boolean, onDismiss: () -> Unit) {
                 Spacer(modifier = Modifier.height(Size.small))
             }
             item {
-                Text(
-                    text = message,
-                    modifier = Modifier.padding(bottom = Size.medium)
-                )
+                BasicText(text = message, modifier = Modifier.padding(bottom = Size.medium))
             }
             item {
                 Chip(label = {
-                    Text(stringResource(R.string.button_settings))
+                    BasicText(text = stringResource(R.string.button_settings))
                 }, onClick = { context.openAppSettings() }, icon = {
                     Image(
                         painterResource(id = R.drawable.ic_settings),

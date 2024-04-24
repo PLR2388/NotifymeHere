@@ -16,6 +16,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.wear.compose.foundation.ExperimentalWearFoundationApi
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
@@ -29,6 +30,7 @@ import androidx.wear.compose.material.TimeText
 import fr.wonderfulappstudio.notifymehere.R
 import fr.wonderfulappstudio.notifymehere.presentation.theme.Distance
 import fr.wonderfulappstudio.notifymehere.presentation.theme.Size
+import fr.wonderfulappstudio.notifymehere.presentation.ui.composable.BasicText
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalWearFoundationApi::class)
@@ -58,8 +60,8 @@ fun SettingsScreen(
             state = listState) {
 
             item {
-                Text(
-                    stringResource(R.string.question_accuracy),
+                BasicText(
+                    text = stringResource(R.string.question_accuracy),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = Size.SettingScreen.horizontalPaddingFirstElement)
@@ -67,10 +69,10 @@ fun SettingsScreen(
                 )
             }
             item {
-                Text(stringResource(R.string.label_accuracy))
+                BasicText(text = stringResource(R.string.label_accuracy))
             }
             item {
-                Text(
+                BasicText(
                     text = stringResource(
                         R.string.abbreviation_meter,
                         notificationDistance ?: Distance.defaultNotificationDistance

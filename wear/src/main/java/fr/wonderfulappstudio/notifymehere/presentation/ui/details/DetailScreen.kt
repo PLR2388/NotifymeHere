@@ -31,6 +31,7 @@ import androidx.wear.compose.material.TimeText
 import fr.wonderfulappstudio.notifymehere.R
 import fr.wonderfulappstudio.notifymehere.presentation.extension.convertMillisToDate
 import fr.wonderfulappstudio.notifymehere.presentation.theme.Size
+import fr.wonderfulappstudio.notifymehere.presentation.ui.composable.BasicText
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalWearFoundationApi::class)
@@ -59,54 +60,63 @@ fun DetailsScreen(viewModel: DetailViewModel = hiltViewModel(), onBack: () -> Un
         ) {
             viewModel.interestPoint?.let {
                 item {
-                    Text(it.name, fontWeight = FontWeight.ExtraBold, textAlign = TextAlign.Center)
+                    BasicText(
+                        text = it.name,
+                        fontWeight = FontWeight.ExtraBold,
+                        textAlign = TextAlign.Center
+                    )
                 }
                 if (it.description != null) {
                     item {
-                        Text(
-                            stringResource(R.string.label_description),
+                        BasicText(
+                            text = stringResource(R.string.label_description),
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center
                         )
-
                     }
                     item {
-                        Text(
-                            it.description,
+                        BasicText(
+                            text = it.description,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = Size.medium)
                                 .background(Color.DarkGray),
                             fontWeight = FontWeight.Light,
-                            textAlign = TextAlign.Start
+                            textAlign = TextAlign.Start,
                         )
                     }
                 }
                 item {
-                    Text(stringResource(R.string.label_position), fontWeight = FontWeight.Bold)
+                    BasicText(
+                        text = stringResource(R.string.label_position),
+                        fontWeight = FontWeight.Bold,
+                    )
                 }
                 item {
-                    Text("${it.position.latitude}; ${it.position.longitude}")
+                    BasicText(text = "${it.position.latitude}; ${it.position.longitude}")
                 }
 
                 if (it.startDate != null) {
                     item {
-                        Text(
-                            stringResource(R.string.label_start_date),
-                            fontWeight = FontWeight.Bold
+                        BasicText(
+                            text = stringResource(R.string.label_start_date),
+                            fontWeight = FontWeight.Bold,
                         )
                     }
                     item {
-                        Text(it.startDate.convertMillisToDate())
+                        BasicText(text = it.startDate.convertMillisToDate())
                     }
                 }
 
                 if (it.endDate != null) {
                     item {
-                        Text(stringResource(R.string.label_end_date), fontWeight = FontWeight.Bold)
+                        BasicText(
+                            text = stringResource(R.string.label_end_date),
+                            fontWeight = FontWeight.Bold,
+                        )
                     }
                     item {
-                        Text(it.endDate.convertMillisToDate())
+                        BasicText(text = it.endDate.convertMillisToDate())
                     }
                 }
 
@@ -130,7 +140,7 @@ fun DetailsScreen(viewModel: DetailViewModel = hiltViewModel(), onBack: () -> Un
                     )
                 }
             } ?: item {
-                Text(stringResource(R.string.text_empty_details))
+                BasicText(stringResource(R.string.text_empty_details))
             }
 
         }
